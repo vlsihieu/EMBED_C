@@ -1,2 +1,2 @@
 # EMBED_C
-GPIO REGISTER
+Đã xem clip ghi GPIO
