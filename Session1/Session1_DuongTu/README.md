@@ -12,3 +12,4 @@ BTVN1_1: Investigate GPIO module
 
 BTVN1_2: Led 1 điểm sách dịch chuyển
 https://drive.google.com/drive/folders/16W-4xp8xixfVixMEai041l6tdLAf0MFT
+
