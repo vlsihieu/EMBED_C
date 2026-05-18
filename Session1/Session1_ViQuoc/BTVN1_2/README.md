@@ -19,5 +19,5 @@
 \#rule commit
 git commit -m "\[Gpio]\[QuocVi] Update LED light spot shifting "
 
-Udate bài tập 1\_2: Đã up video lên link drive 
+Udate bài tập 1\_2: Đã up video lên link drive.
 
