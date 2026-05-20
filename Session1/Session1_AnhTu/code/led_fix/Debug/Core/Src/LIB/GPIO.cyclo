@@ -1,0 +1,4 @@
+../Core/Src/LIB/GPIO.c:6:6:GPIOx_Init	8
+../Core/Src/LIB/GPIO.c:59:9:GPIOx_Read	1
+../Core/Src/LIB/GPIO.c:65:6:GPIOx_Write	2
+../Core/Src/LIB/GPIO.c:80:6:GPIOx_Toggle	1
