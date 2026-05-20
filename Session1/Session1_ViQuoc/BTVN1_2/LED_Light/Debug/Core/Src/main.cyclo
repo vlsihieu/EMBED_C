@@ -1,0 +1,6 @@
+../Core/Src/main.c:46:13:LED_AllOff	1
+../Core/Src/main.c:54:13:LED_ShowIndex	1
+../Core/Src/main.c:61:5:main	13
+../Core/Src/main.c:173:6:SystemClock_Config	3
+../Core/Src/main.c:202:13:MX_GPIO_Init	1
+../Core/Src/main.c:209:6:Error_Handler	1
