@@ -1,0 +1,4 @@
+../Core/Src/Lib/GPIOx.c:12:6:GPIOx_Init	16	static
+../Core/Src/Lib/GPIOx.c:65:9:GPIOx_Read	16	static
+../Core/Src/Lib/GPIOx.c:71:6:GPIOx_Write	16	static
+../Core/Src/Lib/GPIOx.c:86:6:GPIOx_Toggle	16	static

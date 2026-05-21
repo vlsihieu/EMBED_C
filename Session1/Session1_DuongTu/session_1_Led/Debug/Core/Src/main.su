@@ -1,0 +1,5 @@
+../Core/Src/main.c:37:13:LED_AllOff	16	static
+../Core/Src/main.c:43:13:LED_SetOnly	24	static
+../Core/Src/main.c:49:5:main	24	static
+../Core/Src/main.c:123:6:SystemClock_Config	72	static
+../Core/Src/main.c:153:6:Error_Handler	4	static,ignoring_inline_asm

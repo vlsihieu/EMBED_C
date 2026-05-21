@@ -1,0 +1,4 @@
+GPIOx.c:12:6:GPIOx_Init	8
+GPIOx.c:65:9:GPIOx_Read	1
+GPIOx.c:71:6:GPIOx_Write	2
+GPIOx.c:86:6:GPIOx_Toggle	1
