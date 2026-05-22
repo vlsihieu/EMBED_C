@@ -1,0 +1,9 @@
+../Core/Src/main.c:53:13:setLEDs	1
+../Core/Src/main.c:61:13:allOff	1
+../Core/Src/main.c:64:13:runMode1	4
+../Core/Src/main.c:87:13:runMode2	4
+../Core/Src/main.c:112:16:readButtons	7
+../Core/Src/main.c:176:5:main	3
+../Core/Src/main.c:236:6:SystemClock_Config	3
+../Core/Src/main.c:273:13:MX_GPIO_Init	1
+../Core/Src/main.c:296:6:Error_Handler	1
