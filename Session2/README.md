@@ -3,9 +3,9 @@ TIMER REGISTER - Session 2
 
 1/ Update BT Về Nhà TIMER Module tại Folder này    
 
-BT1 : Code test timer basic và giải thích ?
-BT2 :   
-BT3 :   
+BT1 : Code test timer basic và giải thích ?   
+BT2 : Tìm hiểu output compare ?   
+BT3 : Tìm hiểu input capture ?   
 
 
 2/ rule commit 
