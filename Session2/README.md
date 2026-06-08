@@ -1,7 +1,7 @@
 # EMBED_C
-GPIO REGISTER - Session 1
+TIMER REGISTER - Session 2
 
-1/ Update BT Về Nhà GPIO Module tại Folder này
+1/ Update BT Về Nhà TIMER Module tại Folder này
 2/ rule commit 
 git commit -m "[Moudle][Tên người dev] nội dung commit"
 
