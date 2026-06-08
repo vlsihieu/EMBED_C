@@ -1,0 +1,5 @@
+GPIOx_Ip.c:68:6:GPIO_Init_t	16	static
+GPIOx_Ip.c:306:6:GPIO_WritePin_t	16	static
+GPIOx_Ip.c:327:6:GPIO_Toggle_t	16	static
+GPIOx_Ip.c:343:17:GPIO_ReadPin_t	24	static
+GPIOx_Ip.c:371:22:GPIO_LockPin	24	static

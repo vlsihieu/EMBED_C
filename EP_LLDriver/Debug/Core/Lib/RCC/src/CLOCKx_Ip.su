@@ -1,0 +1,6 @@
+CLOCKx_Ip.c:2:6:Config_Clock_HSE_Register	24	static
+CLOCKx_Ip.c:34:6:Config_Clock_HSI_Register	24	static
+CLOCKx_Ip.c:67:6:RCC_APB2_Peripheral	24	static
+CLOCKx_Ip.c:72:6:RCC_APB1_Peripheral	24	static
+CLOCKx_Ip.c:77:6:RCC_AHB_Peripheral	24	static
+CLOCKx_Ip.c:82:6:RCC_DeInit	24	static,ignoring_inline_asm
