@@ -1,0 +1,2 @@
+../Core/Src/LIB/TIMER.c:8:6:Timer2_4_IT_Config	16	static
+../Core/Src/LIB/TIMER.c:44:6:delay_ms	16	static
