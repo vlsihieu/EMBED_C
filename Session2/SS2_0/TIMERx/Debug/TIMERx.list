@@ -115,18 +115,18 @@ void Timer2_4_IT_Config(TIM_TypeDef *TIMx)
  8000176:	4a11      	ldr	r2, [pc, #68]	@ (80001bc <Timer2_4_IT_Config+0x70>)
  8000178:	f043 0308 	orr.w	r3, r3, #8
  800017c:	61d3      	str	r3, [r2, #28]
-//	APB1 = 72MHz
+//	APB1 = 8MHz
 //  ARR  = 10000
-//  PSC  = 7200-1
+//  PSC  = 8000-1
 //  Config timer 1s ?
 
 	TIMx->ARR = 10000 ;  // 1s
  800017e:	687b      	ldr	r3, [r7, #4]
  8000180:	f242 7210 	movw	r2, #10000	@ 0x2710
  8000184:	62da      	str	r2, [r3, #44]	@ 0x2c
-	TIMx->PSC = 7200- 1;
+	TIMx->PSC = 8000- 1;
  8000186:	687b      	ldr	r3, [r7, #4]
- 8000188:	f641 421f 	movw	r2, #7199	@ 0x1c1f
+ 8000188:	f641 723f 	movw	r2, #7999	@ 0x1f3f
  800018c:	629a      	str	r2, [r3, #40]	@ 0x28
 
 	//  Direction
@@ -179,8 +179,8 @@ void delay_ms(TIM_TypeDef *TIMx, uint16_t ms)
  80001d0:	687b      	ldr	r3, [r7, #4]
  80001d2:	2200      	movs	r2, #0
  80001d4:	625a      	str	r2, [r3, #36]	@ 0x24
-	// CNT chạy cho đến khi bằng số ms cụ thể
-	while (TIMx ->CNT < ms);
+	// f'=8Mhz/8000=1000 -> t'=0.1ms --> 1s = t'*1000
+	while (TIMx->CNT < (uint32_t)ms);
  80001d6:	bf00      	nop
  80001d8:	687b      	ldr	r3, [r7, #4]
  80001da:	6a5a      	ldr	r2, [r3, #36]	@ 0x24
@@ -262,7 +262,7 @@ int main(void)
  8000236:	60d3      	str	r3, [r2, #12]
 
 	          // Gọi hàm delay
-	          // (Truyền 10000 tick * 0.1ms = 1000ms = 1 giây)
+	          // (Truyền 1000 tick * 1 ms = 1000ms = 1 giây)
 	          delay_ms(TIM2, 1000);
  8000238:	f44f 717a 	mov.w	r1, #1000	@ 0x3e8
  800023c:	f04f 4080 	mov.w	r0, #1073741824	@ 0x40000000

@@ -104,7 +104,7 @@ int main(void)
 	          GPIOA->ODR ^= (1 << 5);
 
 	          // Gọi hàm delay
-	          // (Truyền 10000 tick * 0.1ms = 1000ms = 1 giây)
+	          // (Truyền 1000 tick * 1 ms = 1000ms = 1 giây)
 	          delay_ms(TIM2, 1000);
     /* USER CODE BEGIN 3 */
   }
