@@ -1,0 +1,3 @@
+../Core/Src/lib/rgt.c:9:6:GPIO_init	16	static
+../Core/Src/lib/rgt.c:43:6:GPIO_write	16	static
+../Core/Src/lib/rgt.c:51:9:GPIO_read	16	static
