@@ -1,0 +1,2 @@
+timer.c:2:6:Timer2_4_IT_Config	3
+timer.c:27:6:delay_ms	2
