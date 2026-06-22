@@ -1,0 +1,5 @@
+../Core/Src/lbr.c:9:6:GPIO_init	8
+../Core/Src/lbr.c:45:6:GPIO_write	3
+../Core/Src/lbr.c:55:9:GPIO_read	1
+../Core/Src/lbr.c:59:6:TIM2_PWM_Init	5
+../Core/Src/lbr.c:105:6:TIM2_PWM_SetDuty	5
