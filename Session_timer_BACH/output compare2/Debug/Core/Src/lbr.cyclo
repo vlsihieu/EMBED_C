@@ -3,3 +3,4 @@
 ../Core/Src/lbr.c:55:9:GPIO_read	1
 ../Core/Src/lbr.c:59:6:TIM2_PWM_Init	5
 ../Core/Src/lbr.c:105:6:TIM2_PWM_SetDuty	5
+../Core/Src/lbr.c:113:6:TIM3_init	1

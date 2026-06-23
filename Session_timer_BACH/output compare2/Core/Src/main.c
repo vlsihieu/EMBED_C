@@ -27,6 +27,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+uint32_t cnt = 0;
 
 /* USER CODE END PTD */
 
@@ -38,6 +39,18 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
+void TIM3_ISR(void){
+	TIM3->DIER &= ~(0X01<<0);
+	NVIC->ISER[0] |= (0x01<<28);
+	if(!(TIM3->SR & 0x01)){
+		TIM3->SR &= ~(0X01<<0);
+		cnt++;
+	}
+}
+ void delay(uint16_t time){
+	 uint16_t current_cnt = cnt;
+	 while((cnt-current_cnt) < time );
+ }
 
 /* USER CODE END PM */
 
@@ -96,11 +109,11 @@ int main(void)
   GPIO_init(GPIOB, PIN_11, OUTPUT_MODE_10MHZ, AL_FUNC_PUSH_PULL, NO_PULL );
   TIM2_PWM_Init(CH1);
   TIM2_PWM_Init(CH2);
-  TIM2_PWM_Init(CH3);
-  TIM2_PWM_Init(CH4);
-  uint16_t v1 = 0, v2 = 1000, v3 = 0, v4 = 0;
-  uint32_t  step = 0;
+
+  uint16_t v1 = 1000, v2 = 0;
+  uint32_t  step = 1;
   uint8_t  phase = 0;
+
 
 
   /* USER CODE END 2 */
@@ -113,54 +126,43 @@ int main(void)
 
 
     /* USER CODE BEGIN 3 */
-	    //TIM2_PWM_SetDuty(CH1, v1);
-	    //TIM2_PWM_SetDuty(CH2, v2);
-	   // TIM2_PWM_SetDuty(CH3, v3);
-	    //TIM2_PWM_SetDuty(CH4, v4);
 
-	 /* switch(phase) {
-	          case 0:
-	              while(v1){
-	            	  step += 50;
-	            	  if( step == v1 ) {
-	            	  	  step = 0; v2 = 1000; phase = 1;
-	                  }
+	    switch (phase) {
+	        case 0:
+	            if(v1 >= step){
+	            	v1 -= step;
+	            	if(v1 <= step){
+	            		v1=0;
+	            		v2=1000;
+	            		phase = 1;
+	            	}
+	            }
 
-	              }
-	              break;
-	          case 1:
-	              while(v2){
-	            	  step += 50;
-	            	  if( step == v2 ) {
-	            	  	  step = 0; v3 = 1000; phase = 1;
-	                  }
+	            TIM2_PWM_SetDuty(CH1, v1);
+	            TIM2_PWM_SetDuty(CH2, v2);
+	            break;
 
-	              }
-	              break;
-	          case 2:
-	              v3 -= step;
+	        case 1:
+	            if(v2 >= step){
+	            	v2 -= step;
+	            	if(v2 < step){
+	            		v2=0;
+	            		v1=1000;
+	            		phase = 0;
+	            	}
+	            }
+	            TIM2_PWM_SetDuty(CH1, v1);
+	            TIM2_PWM_SetDuty(CH2, v2);
+	            break;
+	    }
 
-	              if(v3 <= 0) {
-	            	  v3 = 0; v4 = 999; phase = 3;
-	              }
-	              break;
-	          case 3:
-	              v4 -= step;
+	    	HAL_Delay(10);
 
-	              if(v4 <= 0) {
-	            	  v4 = 0; v1 = 999; phase = 0;
-	              }
-	              break;
-	      }*/
-	    TIM2_PWM_SetDuty(CH1, v1);
-	    TIM2_PWM_SetDuty(CH2, v1);
-	    TIM2_PWM_SetDuty(CH3, v1);
-	    TIM2_PWM_SetDuty(CH4, v1);
-	    v1 += 50;
-	    while(v1==v2) v1 = 0;
 
-	    HAL_Delay(50);
+
+
   }
+
   /* USER CODE END 3 */
 }
 
