@@ -20,10 +20,11 @@ void Timer2_4_IT_Config(TIM_TypeDef *TIMx)
 
 //	config 1s
 //	TIMx->ARR = 10000;  // 1s
-//	TIMx->PSC = 7200 - 1;
+//	TIMx->PSC = 8000;
 //	APB1 = 8MHz
 //  ARR  = 10000
-//  PSC  = 7200-1
+//  PSC  = 8000
+
 //  Config timer 1s ?
 
 	TIMx->ARR = 10000 ;  // 1s
