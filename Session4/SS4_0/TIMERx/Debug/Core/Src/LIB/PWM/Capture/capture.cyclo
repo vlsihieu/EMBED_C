@@ -1,0 +1,6 @@
+../Core/Src/LIB/PWM/Capture/capture.c:11:6:capture_init	1
+../Core/Src/LIB/PWM/Capture/capture.c:44:14:capture_read	1
+../Core/Src/LIB/PWM/Capture/capture.c:50:14:capture_pulse_width1	1
+../Core/Src/LIB/PWM/Capture/capture.c:55:14:capture_pulse_width2	1
+../Core/Src/LIB/PWM/Capture/capture.c:60:14:capture_pulse_width3	1
+../Core/Src/LIB/PWM/Capture/capture.c:65:14:capture_pulse_width4	1
