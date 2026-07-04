@@ -36,15 +36,15 @@
 //#define ADC2x_Address                         				0x40012800
 //#define ADC1x_Address                     					0x40012400
 #define RCCx_Address 										    0x40021000
-#define GPIOx_Portx_G_Address                    				0x40012000
-#define GPIOx_Portx_F_Address                       			0x40011C00
-#define GPIOx_Portx_E_Address                        			0x40011800
-#define GPIOx_Portx_D_Address                            		0x40011400
-#define GPIOx_Portx_C_Address                               	0x40011000
-#define GPIOx_Portx_B_Address                           		0x40010C00
-#define GPIOx_Portx_A_Address                      			    0x40010800
-#define AFIOx_Address                                   	 	0x40010000
-#define Flashx_Address   				         			    0x40022000
+#define GPIOx_Portx_G_Address               0x40012000
+#define GPIOx_Portx_F_Address               0x40011C00
+#define GPIOx_Portx_E_Address               0x40011800
+#define GPIOx_Portx_D_Address               0x40011400
+#define GPIOx_Portx_C_Address               0x40011000
+#define GPIOx_Portx_B_Address               0x40010C00
+#define GPIOx_Portx_A_Address               0x40010800
+#define AFIOx_Address                       0x40010000
+#define Flashx_Address   				         	  0x40022000
 //#define EXTIx_Address                             			0x40010400
 //#define AFIOx_Address                                   	 	0x40010000
 //#define DACx_Address                                  		0x40007400
@@ -75,6 +75,55 @@
 //#define TIM3_timer_Address                          		0x40000400
 //#define TIM2_timer_Address                         			0x40000000
 
+
+typedef enum
+{
+  STD_OK       = 0x00U,
+  STD_ERROR    = 0x01U,
+  STD_BUSY     = 0x02U,
+  STD_TIMEOUT  = 0x03U
+} HALx_StatusTypeDef;
+
+/**
+* @brief GPIO register structure definition.
+*/
+typedef struct
+{
+   volatile uint32_t CRL;      /* GPIO config (Pin 0~7)  */
+   volatile uint32_t CRH;      /* GPIO config (Pin 8~15) */
+   volatile uint32_t IDR;      /* Read input state       */
+   volatile uint32_t ODR;      /* Read/write output      */
+   volatile uint32_t BSRR;     /* Atomic set/reset       */
+   volatile uint32_t BRR;      /* Reset output           */
+   volatile uint32_t LCKR;     /* Lock configuration     */
+} GPIOx_typedef_t;
+
+/**
+* @brief AFIO register structure definition.
+*/
+typedef struct
+{
+   volatile uint32_t EVCR;      /* Event control         */
+   volatile uint32_t MAPR;      /* Remap configuration   */
+   volatile uint32_t EXTICR1;   /* EXTI config (0~3)     */
+   volatile uint32_t EXTICR2;   /* EXTI config (4~7)     */
+   volatile uint32_t EXTICR3;   /* EXTI config (8~11)    */
+   volatile uint32_t EXTICR4;   /* EXTI config (12~15)   */
+   volatile uint32_t MAPR2;     /* Additional remap      */
+} AFIOx_typedef_t;
+
+
+
+
+
+
+
+ #define GPIOAx  ((GPIOx_typedef_t *)GPIOx_Portx_A_Address)
+ #define GPIOBx  ((GPIOx_typedef_t *)GPIOx_Portx_B_Address)
+ #define GPIOCx  ((GPIOx_typedef_t *)GPIOx_Portx_C_Address)
+ #define GPIODx  ((GPIOx_typedef_t *)GPIOx_Portx_D_Address)
+ #define GPIOEx  ((GPIOx_typedef_t *)GPIOx_Portx_E_Address)
+ #define AFIOx   ((AFIOx_typedef_t *)AFIOx_Address)
 
 /* Exported macro ------------------------------------------------------------*/
 #ifdef  USE_FULL_ASSERT

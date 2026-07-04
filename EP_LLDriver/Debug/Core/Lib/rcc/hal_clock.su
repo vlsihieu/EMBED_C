@@ -1,0 +1,10 @@
+hal_clock.c:49:6:HALx_SYSTICK_Config	16	static
+hal_clock.c:73:20:HAL_CLOCK_ConfigHSE	32	static
+hal_clock.c:156:20:HAL_CLOCK_ConfigHSI	32	static
+hal_clock.c:240:6:HAL_CLOCK_DeInit	16	static
+hal_clock.c:279:6:HAL_CLOCK_AHB_Peripheral_Enable	16	static
+hal_clock.c:292:6:HAL_CLOCK_AHB_Peripheral_Disable	16	static
+hal_clock.c:305:6:HAL_CLOCK_APB2_Peripheral_Enable	16	static
+hal_clock.c:318:6:HAL_CLOCK_APB2_Peripheral_Disable	16	static
+hal_clock.c:331:6:HAL_CLOCK_APB1_Peripheral_Enable	16	static
+hal_clock.c:344:6:HAL_CLOCK_APB1_Peripheral_Disable	16	static

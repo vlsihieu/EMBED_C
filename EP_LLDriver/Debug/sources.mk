@@ -20,8 +20,9 @@ OBJCOPY_BIN :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
-Core/Lib/GPIO/src \
-Core/Lib/RCC/src \
+Core/Lib/gpio \
+Core/Lib/rcc \
+Core/Lib/timer \
 Core/Src \
 Core/Startup \
 Drivers/STM32F1xx_HAL_Driver/Src \
