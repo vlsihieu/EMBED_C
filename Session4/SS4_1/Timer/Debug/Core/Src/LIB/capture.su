@@ -1,0 +1,6 @@
+../Core/Src/LIB/capture.c:10:6:capture_init	48	static
+../Core/Src/LIB/capture.c:55:10:capture_read	16	static
+../Core/Src/LIB/capture.c:61:13:capture_pulse_width1	16	static
+../Core/Src/LIB/capture.c:66:13:capture_pulse_width2	16	static
+../Core/Src/LIB/capture.c:71:13:capture_pulse_width3	16	static
+../Core/Src/LIB/capture.c:76:13:capture_pulse_width4	4	static
