@@ -1,6 +1,0 @@
-capture.c:7:6:capture_init	1
-capture.c:72:10:capture_read	1
-capture.c:77:10:capture_pulse_width1	1
-capture.c:82:10:capture_pulse_width2	1
-capture.c:87:10:capture_pulse_width3	1
-capture.c:92:10:capture_pulse_width4	1
