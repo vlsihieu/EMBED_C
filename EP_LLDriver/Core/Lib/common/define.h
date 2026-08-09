@@ -32,7 +32,7 @@
 //#define USART1x_Address                						0x40013800
 //#define TIM8x_timer_Address            						0x40013400
 //#define SPI1x_Address                        				0x40013000
-//#define TIM1x_Address                     		     		0x40012C00
+
 //#define ADC2x_Address                         				0x40012800
 //#define ADC1x_Address                     					0x40012400
 #define RCCx_Address 										    0x40021000
@@ -45,6 +45,16 @@
 #define GPIOx_Portx_A_Address               0x40010800
 #define AFIOx_Address                       0x40010000
 #define Flashx_Address   				         	  0x40022000
+#define TIM14x_timer_Address                0x40002000
+#define TIM13x_timer_Address                0x40001C00
+#define TIM12x_timer_Address                0x40001800
+#define TIM7x_timer_Address                 0x40001400
+#define TIM6x_timer_Address                 0x40001000
+#define TIM5x_timer_Address                 0x40000C00
+#define TIM4x_timer_Address                 0x40000800
+#define TIM3x_timer_Address                 0x40000400
+#define TIM2x_timer_Address                 0x40000000
+#define TIM1x_timer_Address                       0x40012C00
 //#define EXTIx_Address                             			0x40010400
 //#define AFIOx_Address                                   	 	0x40010000
 //#define DACx_Address                                  		0x40007400
@@ -65,15 +75,6 @@
 //#define IWDG_Address                                   		0x40003000
 //#define WWDG_Address                                    	0x40002C00
 //#define RTC_Address                                        	0x40002800
-//#define TIM14_timer_Address                            		0x40002000
-//#define TIM13_timer_Address                           		0x40001C00
-//#define TIM12_timer_Address                           		0x40001800
-//#define TIM7_timer_Address                            		0x40001400
-//#define TIM6_timer_Address                              	0x40001000
-//#define TIM5_timer_Address                           		0x40000C00
-//#define TIM4_timer_Address                              	0x40000800
-//#define TIM3_timer_Address                          		0x40000400
-//#define TIM2_timer_Address                         			0x40000000
 
 
 typedef enum
@@ -112,18 +113,52 @@ typedef struct
    volatile uint32_t MAPR2;     /* Additional remap      */
 } AFIOx_typedef_t;
 
+/**
+* @brief TIMER register structure definition.
+*/
+typedef struct
+{
+    __IO uint32_t CR1;
+    __IO uint32_t CR2;
+    __IO uint32_t SMCR;
+    __IO uint32_t DIER;
+    __IO uint32_t SR;
+    __IO uint32_t EGR;
+    __IO uint32_t CCMR1;
+    __IO uint32_t CCMR2;
+    __IO uint32_t CCER;
+    __IO uint32_t CNT;
+    __IO uint32_t PSC;
+    __IO uint32_t ARR;
+    __IO uint32_t RCR;
+    __IO uint32_t CCR1;
+    __IO uint32_t CCR2;
+    __IO uint32_t CCR3;
+    __IO uint32_t CCR4;
+    __IO uint32_t BDTR;
+    __IO uint32_t DCR;
+    __IO uint32_t DMAR;
+} TIMx_TypeDef_t;
 
 
+#define TIM1x   ((TIMx_TypeDef_t *) TIM1x_timer_Address)
+#define TIM2x   ((TIMx_TypeDef_t *) TIM2x_timer_Address)
+#define TIM3x   ((TIMx_TypeDef_t *) TIM3x_timer_Address)
+#define TIM4x   ((TIMx_TypeDef_t *) TIM4x_timer_Address)
+#define TIM5x   ((TIMx_TypeDef_t *) TIM5x_timer_Address)
+#define TIM6x   ((TIMx_TypeDef_t *) TIM6x_timer_Address)
+#define TIM7x   ((TIMx_TypeDef_t *) TIM7x_timer_Address)
+#define TIM12x  ((TIMx_TypeDef_t *) TIM12x_timer_Address)
+#define TIM13x  ((TIMx_TypeDef_t *) TIM13x_timer_Address)
+#define TIM14x  ((TIMx_TypeDef_t *) TIM14x_timer_Address)
 
 
-
-
- #define GPIOAx  ((GPIOx_typedef_t *)GPIOx_Portx_A_Address)
- #define GPIOBx  ((GPIOx_typedef_t *)GPIOx_Portx_B_Address)
- #define GPIOCx  ((GPIOx_typedef_t *)GPIOx_Portx_C_Address)
- #define GPIODx  ((GPIOx_typedef_t *)GPIOx_Portx_D_Address)
- #define GPIOEx  ((GPIOx_typedef_t *)GPIOx_Portx_E_Address)
- #define AFIOx   ((AFIOx_typedef_t *)AFIOx_Address)
+#define GPIOAx  ((GPIOx_typedef_t *)GPIOx_Portx_A_Address)
+#define GPIOBx  ((GPIOx_typedef_t *)GPIOx_Portx_B_Address)
+#define GPIOCx  ((GPIOx_typedef_t *)GPIOx_Portx_C_Address)
+#define GPIODx  ((GPIOx_typedef_t *)GPIOx_Portx_D_Address)
+#define GPIOEx  ((GPIOx_typedef_t *)GPIOx_Portx_E_Address)
+#define AFIOx   ((AFIOx_typedef_t *)AFIOx_Address)
 
 /* Exported macro ------------------------------------------------------------*/
 #ifdef  USE_FULL_ASSERT

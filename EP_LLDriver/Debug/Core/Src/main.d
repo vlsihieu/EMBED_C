@@ -21,10 +21,10 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h \
- C:/Users/hieuk/STM32CubeIDE/workspace_1.6.0/EP_LLDriver/Core/Lib/gpio/hal_gpio.h \
- C:/Users/hieuk/STM32CubeIDE/workspace_1.6.0/EP_LLDriver/Core/Lib/common/define.h \
- C:/Users/hieuk/STM32CubeIDE/workspace_1.6.0/EP_LLDriver/Core/Lib/rcc/hal_clock.h \
- ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h
+ C:/Users/hieuk/Downloads/EMBED_C-develop/EMBED_C-develop/EP_LLDriver/Core/Lib/gpio/hal_gpio.h \
+ ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h \
+ C:/Users/hieuk/Downloads/EMBED_C-develop/EMBED_C-develop/EP_LLDriver/Core/Lib/common/define.h \
+ C:/Users/hieuk/Downloads/EMBED_C-develop/EMBED_C-develop/EP_LLDriver/Core/Lib/rcc/hal_clock.h
 
 ../Core/Inc/main.h:
 
@@ -72,10 +72,10 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h:
 
-C:/Users/hieuk/STM32CubeIDE/workspace_1.6.0/EP_LLDriver/Core/Lib/gpio/hal_gpio.h:
-
-C:/Users/hieuk/STM32CubeIDE/workspace_1.6.0/EP_LLDriver/Core/Lib/common/define.h:
-
-C:/Users/hieuk/STM32CubeIDE/workspace_1.6.0/EP_LLDriver/Core/Lib/rcc/hal_clock.h:
+C:/Users/hieuk/Downloads/EMBED_C-develop/EMBED_C-develop/EP_LLDriver/Core/Lib/gpio/hal_gpio.h:
 
 ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h:
+
+C:/Users/hieuk/Downloads/EMBED_C-develop/EMBED_C-develop/EP_LLDriver/Core/Lib/common/define.h:
+
+C:/Users/hieuk/Downloads/EMBED_C-develop/EMBED_C-develop/EP_LLDriver/Core/Lib/rcc/hal_clock.h:

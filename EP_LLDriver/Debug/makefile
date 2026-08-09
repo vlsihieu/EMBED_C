@@ -64,8 +64,8 @@ all: main-build
 main-build: EP_LLDriver.elf secondary-outputs
 
 # Tool invocations
-EP_LLDriver.elf: $(OBJS) $(USER_OBJS) C:\Users\hieuk\STM32CubeIDE\workspace_1.6.0\EP_LLDriver\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "EP_LLDriver.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\hieuk\STM32CubeIDE\workspace_1.6.0\EP_LLDriver\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="EP_LLDriver.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+EP_LLDriver.elf: $(OBJS) $(USER_OBJS) C:\Users\hieuk\Downloads\EMBED_C-develop\EMBED_C-develop\EP_LLDriver\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "EP_LLDriver.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\hieuk\Downloads\EMBED_C-develop\EMBED_C-develop\EP_LLDriver\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="EP_LLDriver.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

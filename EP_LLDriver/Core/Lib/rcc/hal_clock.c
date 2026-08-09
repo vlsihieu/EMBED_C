@@ -1,49 +1,87 @@
-/**
- ******************************************************************************
- * @file    hal_clock.h
- * @author  hieuk
- * @brief   HAL Clock Driver — Data types, register structures, bitmasks,
- *          and API prototypes for the RCC (Reset and Clock Control) peripheral
- *          on STM32F103xB devices.
- * @date    May 6, 2026
+/***********************************************************************************************************************
+ * Project Name: STM32F103_BareMetal_Drivers
+ * 
+ * File Name: hal_clock.c
  *
- * @details This driver wraps the RCC peripheral to provide:
- *          - System clock configuration via HSE (72 MHz) or HSI (64 MHz)
- *          - PLL setup and source selection
- *          - AHB / APB1 / APB2 bus clock divider configuration
- *          - Per-peripheral clock enable / disable helpers
- *          - SysTick initialisation
+ * Description: Implementation of System Clock Configuration and RCC Driver for STM32F103C8T6
+ * 
  *
- ******************************************************************************
- */
+ * Compiler: GCC
+ *
+ * Revision:
+ *              Version         Date                Change History
+ *              1.0.0           10/08/2026          Initial release for STM32F103xB RCC Module
+ *
+ **********************************************************************************************************************/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/***********************************************************************************************************************
+ *                                                    INCLUDES
+ **********************************************************************************************************************/
+
 #include "hal_clock.h"
 
 /***********************************************************************************************************************
- * LOCAL HARDWARE REGISTERS MAPPING
+ *                                               SOURCE FILE VERSION
  **********************************************************************************************************************/
 
-#define CLOCK_TIMEOUT_VALUE     0x000FFFFFU
-
+/***********************************************************************************************************************
+ *                                                FILE VERSION CHECK
+ **********************************************************************************************************************/
 
 /***********************************************************************************************************************
- * GLOBAL VARIABLE IMPLEMENTATION
+ *                                                 LOCAL MACROS
+ **********************************************************************************************************************/
+
+#define CLOCK_TIMEOUT_VALUE     (0x000FFFFFU)
+
+/***********************************************************************************************************************
+ *                                                     EXTERN
+ **********************************************************************************************************************/
+
+/***********************************************************************************************************************
+ *                                      LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
+ **********************************************************************************************************************/
+
+/***********************************************************************************************************************
+ *                                                 LOCAL CONSTANTS
+ **********************************************************************************************************************/
+
+/***********************************************************************************************************************
+ *                                                 LOCAL VARIABLES
+ **********************************************************************************************************************/
+
+/***********************************************************************************************************************
+ *                                                GLOBAL VARIABLES
  **********************************************************************************************************************/
 
 uint32_t sysCoreClock = 8000000U;
 
- /***********************************************************************************************************************
- * GLOBAL FUNCTIONS IMPLEMENTATION
- ************************************************************************************************************************/
+/***********************************************************************************************************************
+ *                                           LOCAL FUNCTION PROTOTYPES
+ **********************************************************************************************************************/
+
+/***********************************************************************************************************************
+ *                                                 LOCAL FUNCTION
+ **********************************************************************************************************************/
+
+/***********************************************************************************************************************
+ *                                                GLOBAL FUNCTION
+ **********************************************************************************************************************/
 
 /**
  * @brief  Initialise the Cortex-M3 SysTick timer.
  *
- * Programs LOAD with (ticks − 1), clears the current value, then
+ * Programs LOAD with (ticks - 1), clears the current value, then
  * enables the counter and its interrupt with AHB/8 as clock source.
  * Used internally to generate the 1 ms HAL tick.
  *
- * @param[in] ticks  Reload value — number of SysTick clock cycles between
- *                   successive interrupts. Pass (HCLK / 1000) for a 1 ms period.
+ * @param[in] ticks Reload value - number of SysTick clock cycles between
+ *                  successive interrupts. Pass (HCLK / 1000) for a 1 ms period.
+ *
  * @retval None
  */
 void HALx_SYSTICK_Config(uint32_t ticks)
@@ -59,7 +97,7 @@ void HALx_SYSTICK_Config(uint32_t ticks)
 }
 
 /**
- * @brief   Configure the system clock to 72 MHz using HSE and PLL.
+ * @brief  Configure the system clock to 72 MHz using HSE and PLL.
  *
  * Clock configuration:
  * HSE (8 MHz) -> PLL (x9) -> SYSCLK (72 MHz)
@@ -67,14 +105,14 @@ void HALx_SYSTICK_Config(uint32_t ticks)
  * PCLK1 = 36 MHz
  * PCLK2 = 72 MHz
  *
- * @retval  HAL_OK       Clock configured successfully.
- * @retval  HAL_TIMEOUT  Timeout occurred during clock configuration.
+ * @retval HAL_OK      Clock configured successfully.
+ * @retval HAL_TIMEOUT Timeout occurred during clock configuration.
  */
 HALx_StatusTypeDef HAL_CLOCK_ConfigHSE(void)
 {
     CLOCKx_OscInitTypeDef_t osc_init_struct = {0};
     CLOCKx_ClkInitTypeDef_t clk_init_struct = {0};
-    uint32_t timeout_counter = 0;
+    uint32_t timeout_counter = 0U;
 
     /* Load configuration for HSE + PLL */
     osc_init_struct.OscillatorType = CLOCKx_OSCType_HSE;
@@ -86,12 +124,15 @@ HALx_StatusTypeDef HAL_CLOCK_ConfigHSE(void)
     /* Enable HSE Oscillator and wait until ready */
     if (osc_init_struct.HSEState == CLOCKx_State_ON)
     {
-        RCC->CR |= (RCCx_CR_HSEON);
+        RCC->CR |= RCCx_CR_HSEON;
 
         while ((RCC->CR & RCCx_CR_HSERDY) == 0U)
         {
-            if (++timeout_counter > CLOCK_TIMEOUT_VALUE) return STD_TIMEOUT;
-
+            timeout_counter++;
+            if (timeout_counter > CLOCK_TIMEOUT_VALUE)
+            {
+                return STD_TIMEOUT;
+            }
         }
     }
 
@@ -107,12 +148,16 @@ HALx_StatusTypeDef HAL_CLOCK_ConfigHSE(void)
         RCC->CFGR |= (osc_init_struct.PLLSource | osc_init_struct.PLLMul);
 
         /* Enable PLL */
-        RCC->CR   |= RCCx_CR_PLLON;
+        RCC->CR |= RCCx_CR_PLLON;
 
-        timeout_counter = 0;
+        timeout_counter = 0U;
         while ((RCC->CR & RCCx_CR_PLLRDY) == 0U)
         {
-            if (++timeout_counter > CLOCK_TIMEOUT_VALUE) return STD_TIMEOUT;
+            timeout_counter++;
+            if (timeout_counter > CLOCK_TIMEOUT_VALUE)
+            {
+                return STD_TIMEOUT;
+            }
         }
     }
 
@@ -122,16 +167,20 @@ HALx_StatusTypeDef HAL_CLOCK_ConfigHSE(void)
     clk_init_struct.APB1CLKDivider = CLOCKx_Apb1Div_2_APB1;
     clk_init_struct.APB2CLKDivider = CLOCKx_Apb2Div_1_APB2;
 
-    RCC->CFGR = RCC->CFGR & ~(RCCx_CFGR_HPRE | RCCx_CFGR_PPRE1 | RCCx_CFGR_PPRE2);
-    RCC->CFGR = (clk_init_struct.AHBCLKDivider | clk_init_struct.APB1CLKDivider | clk_init_struct.APB2CLKDivider);
+    RCC->CFGR &= ~(RCCx_CFGR_HPRE | RCCx_CFGR_PPRE1 | RCCx_CFGR_PPRE2);
+    RCC->CFGR |= (clk_init_struct.AHBCLKDivider | clk_init_struct.APB1CLKDivider | clk_init_struct.APB2CLKDivider);
 
     /* Switch system clock source to PLL and wait for confirmation */
     RCC->CFGR = (RCC->CFGR & ~RCCx_CFGR_SW) | clk_init_struct.SYSCLKSource;
 
-    timeout_counter = 0;
+    timeout_counter = 0U;
     while ((RCC->CFGR & RCCx_CFGR_SWS) != RCCx_CFGR_SWS_PLL)
     {
-        if (++timeout_counter > CLOCK_TIMEOUT_VALUE) return STD_TIMEOUT;
+        timeout_counter++;
+        if (timeout_counter > CLOCK_TIMEOUT_VALUE)
+        {
+            return STD_TIMEOUT;
+        }
     }
 
     /* Global clock tracking and SysTick update */
@@ -142,7 +191,7 @@ HALx_StatusTypeDef HAL_CLOCK_ConfigHSE(void)
 }
 
 /**
- * @brief   Configure the system clock to 64 MHz using HSI and PLL.
+ * @brief  Configure the system clock to 64 MHz using HSI and PLL.
  *
  * Clock configuration:
  * HSI (8 MHz) -> Div 2 (4 MHz) -> PLL (x16) -> SYSCLK (64 MHz)
@@ -150,14 +199,14 @@ HALx_StatusTypeDef HAL_CLOCK_ConfigHSE(void)
  * PCLK1 = 32 MHz
  * PCLK2 = 64 MHz
  *
- * @retval  HAL_OK       Clock configured successfully.
- * @retval  HAL_TIMEOUT  Timeout occurred during clock configuration.
+ * @retval HAL_OK      Clock configured successfully.
+ * @retval HAL_TIMEOUT Timeout occurred during clock configuration.
  */
 HALx_StatusTypeDef HAL_CLOCK_ConfigHSI(void)
 {
     CLOCKx_OscInitTypeDef_t osc_init_struct = {0};
     CLOCKx_ClkInitTypeDef_t clk_init_struct = {0};
-    uint32_t timeout_counter = 0;
+    uint32_t timeout_counter = 0U;
 
     /* Load configuration for HSI + PLL */
     osc_init_struct.OscillatorType = CLOCKx_OSCType_HSI;
@@ -171,7 +220,11 @@ HALx_StatusTypeDef HAL_CLOCK_ConfigHSI(void)
 
     while ((RCC->CR & RCCx_CR_HSIRDY) == 0U)
     {
-        if (++timeout_counter > CLOCK_TIMEOUT_VALUE) return STD_TIMEOUT;
+        timeout_counter++;
+        if (timeout_counter > CLOCK_TIMEOUT_VALUE)
+        {
+            return STD_TIMEOUT;
+        }
     }
 
     /* Flash configuration: 2 Wait States + Prefetch Buffer */
@@ -181,18 +234,22 @@ HALx_StatusTypeDef HAL_CLOCK_ConfigHSI(void)
     /* Configure and enable PLL (Must disable PLL before re-configuration) */
     if (osc_init_struct.PLLState == CLOCKx_State_ON)
     {
-        /* Routine HSI = 8Mhz, Div = 2, PLLSRC = 0, PLLMULL = x16 */
+        /* Routine HSI = 8MHz, Div = 2, PLLSRC = 0, PLLMULL = x16 */
         RCC->CFGR &= ~(RCCx_CFGR_PLLSRC | RCCx_CFGR_PLLMULL);
         RCC->CFGR |= (osc_init_struct.PLLSource | osc_init_struct.PLLMul);
 
         /* Enable PLL */
-        RCC->CR   &= ~RCCx_CR_PLLON;
-        RCC->CR   |= RCCx_CR_PLLON;
+        RCC->CR &= ~RCCx_CR_PLLON;
+        RCC->CR |= RCCx_CR_PLLON;
 
-        timeout_counter = 0;
+        timeout_counter = 0U;
         while ((RCC->CR & RCCx_CR_PLLRDY) == 0U)
         {
-            if (++timeout_counter > CLOCK_TIMEOUT_VALUE) return STD_TIMEOUT;
+            timeout_counter++;
+            if (timeout_counter > CLOCK_TIMEOUT_VALUE)
+            {
+                return STD_TIMEOUT;
+            }
         }
     }
 
@@ -202,16 +259,20 @@ HALx_StatusTypeDef HAL_CLOCK_ConfigHSI(void)
     clk_init_struct.APB1CLKDivider = CLOCKx_Apb1Div_2_APB1;
     clk_init_struct.APB2CLKDivider = CLOCKx_Apb2Div_1_APB2;
 
-    RCC->CFGR = (RCC->CFGR & ~(RCCx_CFGR_HPRE | RCCx_CFGR_PPRE1 | RCCx_CFGR_PPRE2));
-    RCC->CFGR = (clk_init_struct.AHBCLKDivider | clk_init_struct.APB1CLKDivider | clk_init_struct.APB2CLKDivider);
+    RCC->CFGR &= ~(RCCx_CFGR_HPRE | RCCx_CFGR_PPRE1 | RCCx_CFGR_PPRE2);
+    RCC->CFGR |= (clk_init_struct.AHBCLKDivider | clk_init_struct.APB1CLKDivider | clk_init_struct.APB2CLKDivider);
 
     /* Switch system clock source to PLL and wait for confirmation */
     RCC->CFGR = (RCC->CFGR & ~RCCx_CFGR_SW) | clk_init_struct.SYSCLKSource;
 
-    timeout_counter = 0;
+    timeout_counter = 0U;
     while ((RCC->CFGR & RCCx_CFGR_SWS) != RCCx_CFGR_SWS_PLL)
     {
-        if (++timeout_counter > CLOCK_TIMEOUT_VALUE) return STD_TIMEOUT;
+        timeout_counter++;
+        if (timeout_counter > CLOCK_TIMEOUT_VALUE)
+        {
+            return STD_TIMEOUT;
+        }
     }
 
     /* Global clock tracking and SysTick update */
@@ -232,20 +293,26 @@ HALx_StatusTypeDef HAL_CLOCK_ConfigHSI(void)
  * - Restores PLL source and multiplication factor to their reset values.
  * - Disables all RCC interrupts and clears all pending interrupt flags.
  *
- * @note  This function only resets the RCC peripheral. It does not modify
- *        Flash latency, SysTick configuration, or global interrupt state.
+ * @note   This function only resets the RCC peripheral. It does not modify
+ *         Flash latency, SysTick configuration, or global interrupt state.
  *
  * @retval None
  */
 void HAL_CLOCK_DeInit(void)
 {
-    uint32_t timeout = 0xFFFF;
+    uint32_t timeout = 0xFFFFU;
 
     /* 1. Enable HSI oscillator */
-    RCC->CR |= (1U << 0); 
+    RCC->CR |= (1U << 0U); 
 
     /* 2. Wait until HSI is ready */
-    while (!(RCC->CR & (1U << 1))) { if (--timeout == 0) break; }
+    while ((RCC->CR & (1U << 1U)) == 0U)
+    {
+        if (--timeout == 0U)
+        {
+            break;
+        }
+    }
 
     /* 3. Switch SYSCLK source back to HSI */
     RCC->CFGR &= ~0x00000003U; 
@@ -254,7 +321,7 @@ void HAL_CLOCK_DeInit(void)
     RCC->CFGR &= ~(0x00000F00U | 0x000000F0U);
 
     /* 5. Disable HSE, CSS, and PLL */
-    RCC->CR &= ~( (1U << 16) | (1U << 19) | (1U << 24) );
+    RCC->CR &= ~((1U << 16U) | (1U << 19U) | (1U << 24U));
 
     /* 6. Reset PLL configuration */
     RCC->CFGR &= ~(0x003F0000U); 
@@ -263,7 +330,7 @@ void HAL_CLOCK_DeInit(void)
     RCC->CIR = 0x00000000U;
     
     /* 8. Update global system clock variable */
-    sysCoreClock = 8000000U; // Reset to 8MHz (HSI default)
+    sysCoreClock = 8000000U;
 }
 
 /**
@@ -273,7 +340,8 @@ void HAL_CLOCK_DeInit(void)
  * A short delay is automatically inserted after enabling to allow the
  * clock to propagate before the peripheral is accessed.
  *
- * @param[in] PeripheralIndex  Peripheral bit position.
+ * @param[in] PeripheralIndex Peripheral bit position.
+ *
  * @retval None
  */
 void HAL_CLOCK_AHB_Peripheral_Enable(RCCx_AHBENR_Index_t PeripheralIndex)
@@ -286,7 +354,8 @@ void HAL_CLOCK_AHB_Peripheral_Enable(RCCx_AHBENR_Index_t PeripheralIndex)
  *
  * Clears the corresponding bit in RCC->AHBENR.
  *
- * @param[in] PeripheralIndex  Peripheral bit position.
+ * @param[in] PeripheralIndex Peripheral bit position.
+ *
  * @retval None
  */
 void HAL_CLOCK_AHB_Peripheral_Disable(RCCx_AHBENR_Index_t PeripheralIndex)
@@ -299,7 +368,8 @@ void HAL_CLOCK_AHB_Peripheral_Disable(RCCx_AHBENR_Index_t PeripheralIndex)
  *
  * Sets the corresponding bit in RCC->APB2ENR.
  *
- * @param[in] PeripheralIndex  Peripheral bit position.
+ * @param[in] PeripheralIndex Peripheral bit position.
+ *
  * @retval None
  */
 void HAL_CLOCK_APB2_Peripheral_Enable(RCCx_APB2ENR_Index_t PeripheralIndex)
@@ -312,7 +382,8 @@ void HAL_CLOCK_APB2_Peripheral_Enable(RCCx_APB2ENR_Index_t PeripheralIndex)
  *
  * Clears the corresponding bit in RCC->APB2ENR.
  *
- * @param[in] PeripheralIndex  Peripheral bit position.
+ * @param[in] PeripheralIndex Peripheral bit position.
+ *
  * @retval None
  */
 void HAL_CLOCK_APB2_Peripheral_Disable(RCCx_APB2ENR_Index_t PeripheralIndex)
@@ -325,7 +396,8 @@ void HAL_CLOCK_APB2_Peripheral_Disable(RCCx_APB2ENR_Index_t PeripheralIndex)
  *
  * Sets the corresponding bit in RCC->APB1ENR.
  *
- * @param[in] PeripheralIndex  Peripheral bit position.
+ * @param[in] PeripheralIndex Peripheral bit position.
+ *
  * @retval None
  */
 void HAL_CLOCK_APB1_Peripheral_Enable(RCCx_APB1ENR_Index_t PeripheralIndex)
@@ -338,10 +410,17 @@ void HAL_CLOCK_APB1_Peripheral_Enable(RCCx_APB1ENR_Index_t PeripheralIndex)
  *
  * Clears the corresponding bit in RCC->APB1ENR.
  *
- * @param[in] PeripheralIndex  Peripheral bit position.
+ * @param[in] PeripheralIndex Peripheral bit position.
+ *
  * @retval None
  */
 void HAL_CLOCK_APB1_Peripheral_Disable(RCCx_APB1ENR_Index_t PeripheralIndex)
 {
     RCC->APB1ENR &= ~(1U << (uint32_t)PeripheralIndex);
 }
+
+#ifdef __cplusplus
+}
+#endif
+
+/*--------------------------------------------------- End Of File -----------------------------------------------------*/
