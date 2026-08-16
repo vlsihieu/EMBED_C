@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""TFT Bitmap Font Generator (PyQt5 + Pillow).
+"""TFT Bitmap Font and RGB565 Picture Generator (PyQt5 + Pillow).
 
 Generates C header files for small TFT/LCD bitmap fonts.  The default output
 matches this common embedded layout::
@@ -10,6 +10,10 @@ matches this common embedded layout::
 
 Each value represents one vertical column of a glyph.  By default, bit 0 is
 the top pixel.  The last column can be reserved as character spacing.
+
+The integrated picture converter loads a common image format, optionally
+resizes or rotates it, converts every pixel to RGB565, and generates a C header
+whose pixel bytes are ordered high byte first for ILI9341 SPI transfers.
 
 Install and run on Windows:
 
@@ -27,15 +31,16 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Sequence, Tuple
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 try:
     from PyQt5.QtCore import QPoint, QSize, Qt, QTimer, pyqtSignal
-    from PyQt5.QtGui import QColor, QFont, QPainter, QPen
+    from PyQt5.QtGui import QColor, QFont, QImage, QPainter, QPen, QPixmap
     from PyQt5.QtWidgets import (
         QApplication,
         QCheckBox,
         QComboBox,
+        QDialog,
         QFileDialog,
         QFormLayout,
         QGridLayout,
@@ -74,6 +79,19 @@ class FontSettings:
     threshold: int = 128
     center_glyphs: bool = True
     lsb_is_top: bool = True
+
+
+@dataclass(frozen=True)
+class ImageExportSettings:
+    """Settings used to prepare an image and generate an RGB565 C header."""
+
+    image_path: str
+    width: int = 320
+    height: int = 240
+    resize_mode: str = "stretch"
+    rotation: int = 0
+    symbol_name: str = "image_data"
+    guard_name: str = "IMAGE_DATA_H"
 
 
 def parse_codepoints(specification: str) -> List[int]:
@@ -297,7 +315,358 @@ def generate_header(
     return "\n".join(lines)
 
 
+def prepare_rgb565_image(settings: ImageExportSettings) -> Image.Image:
+    """Load, orient, and resize an image before RGB565 conversion."""
+    image_path = Path(settings.image_path)
+    if not image_path.is_file():
+        raise ValueError("Select a valid picture file.")
+    if not 1 <= settings.width <= 4096 or not 1 <= settings.height <= 4096:
+        raise ValueError("Image width and height must be from 1 to 4096 pixels.")
+    if settings.resize_mode not in {"original", "stretch", "fit", "crop"}:
+        raise ValueError(f"Unsupported resize mode: {settings.resize_mode}")
+    if settings.rotation not in {0, 90, 180, 270}:
+        raise ValueError("Rotation must be 0, 90, 180, or 270 degrees.")
+
+    with Image.open(image_path) as source:
+        oriented = ImageOps.exif_transpose(source)
+        if "A" in oriented.getbands():
+            rgba_image = oriented.convert("RGBA")
+            background = Image.new("RGBA", rgba_image.size, (0, 0, 0, 255))
+            background.alpha_composite(rgba_image)
+            image = background.convert("RGB")
+        else:
+            image = oriented.convert("RGB")
+
+    transpose_operations = {
+        90: Image.Transpose.ROTATE_270,
+        180: Image.Transpose.ROTATE_180,
+        270: Image.Transpose.ROTATE_90,
+    }
+    if settings.rotation:
+        image = image.transpose(transpose_operations[settings.rotation])
+
+    if settings.resize_mode == "original":
+        return image
+
+    target_size = (settings.width, settings.height)
+    if settings.resize_mode == "stretch":
+        return image.resize(target_size, Image.Resampling.LANCZOS)
+    if settings.resize_mode == "fit":
+        contained = ImageOps.contain(image, target_size, Image.Resampling.LANCZOS)
+        canvas = Image.new("RGB", target_size, (0, 0, 0))
+        position = (
+            (settings.width - contained.width) // 2,
+            (settings.height - contained.height) // 2,
+        )
+        canvas.paste(contained, position)
+        return canvas
+    return ImageOps.fit(
+        image,
+        target_size,
+        method=Image.Resampling.LANCZOS,
+        centering=(0.5, 0.5),
+    )
+
+
+def rgb565_bytes(image: Image.Image) -> bytes:
+    """Convert an RGB image to high-byte-first RGB565 pixel data."""
+    rgb_image = image.convert("RGB")
+    output = bytearray(rgb_image.width * rgb_image.height * 2)
+    offset = 0
+    for red, green, blue in rgb_image.getdata():
+        value = ((red & 0xF8) << 8) | ((green & 0xFC) << 3) | (blue >> 3)
+        output[offset] = (value >> 8) & 0xFF
+        output[offset + 1] = value & 0xFF
+        offset += 2
+    return bytes(output)
+
+
+def generate_image_header(
+    image: Image.Image,
+    symbol_name: str = "image_data",
+    guard_name: str = "IMAGE_DATA_H",
+    bytes_per_line: int = 16,
+) -> str:
+    """Generate a C header containing high-byte-first RGB565 image data."""
+    if image.width <= 0 or image.height <= 0:
+        raise ValueError("The converted picture is empty.")
+    if bytes_per_line <= 0:
+        raise ValueError("Bytes per line must be greater than zero.")
+
+    symbol = c_identifier(symbol_name)
+    guard = c_identifier(guard_name, uppercase=True)
+    macro_prefix = c_identifier(symbol_name, uppercase=True)
+    data = rgb565_bytes(image)
+    file_name = f"{symbol}.h"
+
+    lines = [
+        "/*******************************************************************************************************************//**",
+        f" * @file {file_name}",
+        " * @brief Contains RGB565 picture data for an ILI9341 TFT LCD.",
+        " *",
+        " * Pixels are ordered from left to right and top to bottom. Each pixel is stored as high byte followed by low byte.",
+        " **********************************************************************************************************************/",
+        "",
+        f"#ifndef {guard}",
+        f"#define {guard}",
+        "",
+        "#include <stdint.h>",
+        "",
+        f"#define {macro_prefix}_WIDTH        ({image.width}U)",
+        f"#define {macro_prefix}_HEIGHT       ({image.height}U)",
+        f"#define {macro_prefix}_PIXEL_COUNT  ({image.width * image.height}U)",
+        f"#define {macro_prefix}_BYTE_COUNT   ({len(data)}U)",
+        "",
+        "/* Pass this array to ILI9341_Draw_Image() as (const char *). */",
+        f"static const uint8_t {symbol}[{macro_prefix}_BYTE_COUNT] =",
+        "{",
+    ]
+
+    for start in range(0, len(data), bytes_per_line):
+        chunk = data[start : start + bytes_per_line]
+        values = ", ".join(f"0x{value:02X}U" for value in chunk)
+        lines.append(f"    {values},")
+
+    lines.extend(
+        [
+            "};",
+            "",
+            f"#endif /* {guard} */",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
 if QT_AVAILABLE:
+
+    class ImageConverterDialog(QDialog):
+        """GUI for converting a picture into an ILI9341 RGB565 C array."""
+
+        def __init__(self, parent: QWidget | None = None) -> None:
+            super().__init__(parent)
+            self.setWindowTitle("Picture to RGB565 Converter")
+            self.resize(1120, 760)
+            self._converted_image: Image.Image | None = None
+            self._generated_header = ""
+            self._build_ui()
+            self._connect_signals()
+            self._update_size_controls()
+
+        def _spin(self, minimum: int, maximum: int, value: int) -> QSpinBox:
+            widget = QSpinBox()
+            widget.setRange(minimum, maximum)
+            widget.setValue(value)
+            return widget
+
+        def _build_ui(self) -> None:
+            outer = QVBoxLayout(self)
+
+            title = QLabel("Picture to RGB565 Converter")
+            title_font = QFont()
+            title_font.setPointSize(16)
+            title_font.setBold(True)
+            title.setFont(title_font)
+            outer.addWidget(title)
+
+            description = QLabel(
+                "Convert PNG, JPEG, BMP, and other Pillow-supported pictures into a high-byte-first "
+                "RGB565 C array for ILI9341_Draw_Image()."
+            )
+            description.setWordWrap(True)
+            outer.addWidget(description)
+
+            source_group = QGroupBox("Picture source")
+            source_form = QFormLayout(source_group)
+            source_row = QHBoxLayout()
+            self.image_path = QLineEdit()
+            self.image_path.setPlaceholderText("Select a picture file...")
+            self.browse_image_button = QPushButton("Browse...")
+            source_row.addWidget(self.image_path, 1)
+            source_row.addWidget(self.browse_image_button)
+            source_form.addRow("Picture file:", source_row)
+            outer.addWidget(source_group)
+
+            settings_group = QGroupBox("RGB565 output")
+            settings_grid = QGridLayout(settings_group)
+            self.image_width = self._spin(1, 4096, 320)
+            self.image_height = self._spin(1, 4096, 240)
+            self.resize_mode = QComboBox()
+            self.resize_mode.addItem("Stretch to output size", "stretch")
+            self.resize_mode.addItem("Fit with black bars", "fit")
+            self.resize_mode.addItem("Fill and center crop", "crop")
+            self.resize_mode.addItem("Keep original size", "original")
+            self.rotation = QComboBox()
+            self.rotation.addItem("0 degrees", 0)
+            self.rotation.addItem("90 degrees clockwise", 90)
+            self.rotation.addItem("180 degrees", 180)
+            self.rotation.addItem("270 degrees clockwise", 270)
+            self.image_symbol = QLineEdit("image_data")
+            self.image_guard = QLineEdit("IMAGE_DATA_H")
+
+            settings_grid.addWidget(QLabel("Output width:"), 0, 0)
+            settings_grid.addWidget(self.image_width, 0, 1)
+            settings_grid.addWidget(QLabel("Output height:"), 0, 2)
+            settings_grid.addWidget(self.image_height, 0, 3)
+            settings_grid.addWidget(QLabel("Resize mode:"), 1, 0)
+            settings_grid.addWidget(self.resize_mode, 1, 1)
+            settings_grid.addWidget(QLabel("Rotate picture:"), 1, 2)
+            settings_grid.addWidget(self.rotation, 1, 3)
+            settings_grid.addWidget(QLabel("C array name:"), 2, 0)
+            settings_grid.addWidget(self.image_symbol, 2, 1)
+            settings_grid.addWidget(QLabel("Header guard:"), 2, 2)
+            settings_grid.addWidget(self.image_guard, 2, 3)
+            outer.addWidget(settings_group)
+
+            splitter = QSplitter(Qt.Horizontal)
+            outer.addWidget(splitter, 1)
+
+            preview_panel = QWidget()
+            preview_layout = QVBoxLayout(preview_panel)
+            preview_layout.addWidget(QLabel("Converted picture preview:"))
+            self.image_preview = QLabel("No picture selected")
+            self.image_preview.setAlignment(Qt.AlignCenter)
+            self.image_preview.setMinimumSize(360, 300)
+            self.image_preview.setStyleSheet(
+                "QLabel { background: #20252B; color: #DDE3EA; border: 1px solid #68717C; }"
+            )
+            preview_layout.addWidget(self.image_preview, 1)
+            self.image_information = QLabel("Output: --")
+            self.image_information.setTextInteractionFlags(Qt.TextSelectableByMouse)
+            preview_layout.addWidget(self.image_information)
+            splitter.addWidget(preview_panel)
+
+            output_panel = QWidget()
+            output_layout = QVBoxLayout(output_panel)
+            output_layout.addWidget(QLabel("Generated RGB565 C header:"))
+            self.image_header_preview = QTextEdit()
+            self.image_header_preview.setReadOnly(True)
+            mono = QFont("Consolas")
+            mono.setStyleHint(QFont.Monospace)
+            self.image_header_preview.setFont(mono)
+            output_layout.addWidget(self.image_header_preview, 1)
+            splitter.addWidget(output_panel)
+            splitter.setSizes([430, 650])
+
+            button_row = QHBoxLayout()
+            self.convert_image_button = QPushButton("Convert picture")
+            self.copy_image_button = QPushButton("Copy C code")
+            self.save_image_button = QPushButton("Save .h...")
+            self.close_image_button = QPushButton("Close")
+            button_row.addWidget(self.convert_image_button)
+            button_row.addStretch(1)
+            button_row.addWidget(self.copy_image_button)
+            button_row.addWidget(self.save_image_button)
+            button_row.addWidget(self.close_image_button)
+            outer.addLayout(button_row)
+
+        def _connect_signals(self) -> None:
+            self.browse_image_button.clicked.connect(self.choose_picture)
+            self.resize_mode.currentIndexChanged.connect(self._update_size_controls)
+            self.convert_image_button.clicked.connect(self.convert_picture)
+            self.copy_image_button.clicked.connect(self.copy_image_header)
+            self.save_image_button.clicked.connect(self.save_image_header)
+            self.close_image_button.clicked.connect(self.accept)
+
+        def _update_size_controls(self, *_args) -> None:
+            enabled = self.resize_mode.currentData() != "original"
+            self.image_width.setEnabled(enabled)
+            self.image_height.setEnabled(enabled)
+
+        def choose_picture(self) -> None:
+            selected, _ = QFileDialog.getOpenFileName(
+                self,
+                "Select picture",
+                self.image_path.text() or str(Path.home()),
+                "Picture files (*.png *.jpg *.jpeg *.bmp *.gif *.tif *.tiff *.webp);;All files (*.*)",
+            )
+            if not selected:
+                return
+            self.image_path.setText(selected)
+            symbol = c_identifier(Path(selected).stem) + "_rgb565"
+            self.image_symbol.setText(symbol)
+            self.image_guard.setText(c_identifier(symbol + "_H", uppercase=True))
+            self.convert_picture()
+
+        def current_image_settings(self) -> ImageExportSettings:
+            return ImageExportSettings(
+                image_path=self.image_path.text().strip(),
+                width=self.image_width.value(),
+                height=self.image_height.value(),
+                resize_mode=str(self.resize_mode.currentData()),
+                rotation=int(self.rotation.currentData()),
+                symbol_name=self.image_symbol.text(),
+                guard_name=self.image_guard.text(),
+            )
+
+        def convert_picture(self) -> bool:
+            try:
+                settings = self.current_image_settings()
+                image = prepare_rgb565_image(settings)
+                header = generate_image_header(
+                    image,
+                    symbol_name=settings.symbol_name,
+                    guard_name=settings.guard_name,
+                )
+                self._converted_image = image
+                self._generated_header = header
+                self.image_header_preview.setPlainText(header)
+                self._show_picture_preview(image)
+                byte_count = image.width * image.height * 2
+                self.image_information.setText(
+                    f"Output: {image.width} x {image.height} pixels | RGB565 | {byte_count:,} bytes"
+                )
+                return True
+            except Exception as error:
+                self._converted_image = None
+                self._generated_header = ""
+                self.image_header_preview.setPlainText(f"Conversion error:\n{error}")
+                self.image_information.setText("Output: --")
+                QMessageBox.critical(self, "Cannot convert picture", str(error))
+                return False
+
+        def _show_picture_preview(self, image: Image.Image) -> None:
+            rgb_image = image.convert("RGB")
+            raw_data = rgb_image.tobytes()
+            qt_image = QImage(
+                raw_data,
+                rgb_image.width,
+                rgb_image.height,
+                rgb_image.width * 3,
+                QImage.Format_RGB888,
+            ).copy()
+            pixmap = QPixmap.fromImage(qt_image)
+            self.image_preview.setPixmap(
+                pixmap.scaled(
+                    self.image_preview.size(),
+                    Qt.KeepAspectRatio,
+                    Qt.SmoothTransformation,
+                )
+            )
+
+        def copy_image_header(self) -> None:
+            if not self.convert_picture():
+                return
+            QApplication.clipboard().setText(self._generated_header)
+            QMessageBox.information(self, "RGB565 converter", "C header copied to clipboard.")
+
+        def save_image_header(self) -> None:
+            if not self.convert_picture():
+                return
+            suggested = c_identifier(self.image_symbol.text()) + ".h"
+            selected, _ = QFileDialog.getSaveFileName(
+                self,
+                "Save RGB565 C header",
+                suggested,
+                "C header (*.h);;All files (*.*)",
+            )
+            if not selected:
+                return
+            try:
+                Path(selected).write_text(self._generated_header, encoding="utf-8", newline="\n")
+                QMessageBox.information(self, "RGB565 converter", f"Saved:\n{selected}")
+            except OSError as error:
+                QMessageBox.critical(self, "Cannot save file", str(error))
 
     class PixelEditor(QWidget):
         """Clickable grid used to inspect and manually correct one glyph."""
@@ -378,12 +747,17 @@ if QT_AVAILABLE:
             self.setCentralWidget(root)
             outer = QVBoxLayout(root)
 
+            title_row = QHBoxLayout()
             title = QLabel("TFT Bitmap Font Generator")
             title_font = QFont()
             title_font.setPointSize(18)
             title_font.setBold(True)
             title.setFont(title_font)
-            outer.addWidget(title)
+            title_row.addWidget(title)
+            title_row.addStretch(1)
+            self.picture_converter_button = QPushButton("Picture to RGB565...")
+            title_row.addWidget(self.picture_converter_button)
+            outer.addLayout(title_row)
 
             subtitle = QLabel(
                 "Generate column-major C font arrays for ILI9341 and other TFT/LCD drivers. "
@@ -497,6 +871,7 @@ if QT_AVAILABLE:
 
         def _connect_signals(self) -> None:
             self.browse_button.clicked.connect(self.choose_font)
+            self.picture_converter_button.clicked.connect(self.open_picture_converter)
             self.regenerate_button.clicked.connect(self.regenerate)
             self.save_button.clicked.connect(self.save_header)
             self.copy_button.clicked.connect(self.copy_header)
@@ -557,6 +932,10 @@ if QT_AVAILABLE:
             )
             if selected:
                 self.font_path.setText(selected)
+
+        def open_picture_converter(self) -> None:
+            dialog = ImageConverterDialog(self)
+            dialog.exec_()
 
         def regenerate(self) -> None:
             try:
