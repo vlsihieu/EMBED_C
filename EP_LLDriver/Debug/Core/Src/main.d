@@ -21,10 +21,13 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h \
- C:/Users/hieuk/Downloads/EMBED_C-develop/EMBED_C-develop/EP_LLDriver/Core/Lib/gpio/hal_gpio.h \
+ D:/07_Source/embedded_01/EMBED_C/EP_LLDriver/Core/Lib/Driver/gpio/hal_gpio.h \
  ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h \
- C:/Users/hieuk/Downloads/EMBED_C-develop/EMBED_C-develop/EP_LLDriver/Core/Lib/common/define.h \
- C:/Users/hieuk/Downloads/EMBED_C-develop/EMBED_C-develop/EP_LLDriver/Core/Lib/rcc/hal_clock.h
+ D:/07_Source/embedded_01/EMBED_C/EP_LLDriver/Core/Lib/Utils/common/define.h \
+ D:/07_Source/embedded_01/EMBED_C/EP_LLDriver/Core/Lib/Driver/rcc/hal_clock.h \
+ D:/07_Source/embedded_01/EMBED_C/EP_LLDriver/Core/Lib/Driver/timer/hal_timer.h \
+ D:/07_Source/embedded_01/EMBED_C/EP_LLDriver/Core/Lib/Driver/dma/hal_dma.h \
+ D:/07_Source/embedded_01/EMBED_C/EP_LLDriver/Core/Lib/Driver/uart/hal_uart.h
 
 ../Core/Inc/main.h:
 
@@ -72,10 +75,16 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h:
 
-C:/Users/hieuk/Downloads/EMBED_C-develop/EMBED_C-develop/EP_LLDriver/Core/Lib/gpio/hal_gpio.h:
+D:/07_Source/embedded_01/EMBED_C/EP_LLDriver/Core/Lib/Driver/gpio/hal_gpio.h:
 
 ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h:
 
-C:/Users/hieuk/Downloads/EMBED_C-develop/EMBED_C-develop/EP_LLDriver/Core/Lib/common/define.h:
+D:/07_Source/embedded_01/EMBED_C/EP_LLDriver/Core/Lib/Utils/common/define.h:
 
-C:/Users/hieuk/Downloads/EMBED_C-develop/EMBED_C-develop/EP_LLDriver/Core/Lib/rcc/hal_clock.h:
+D:/07_Source/embedded_01/EMBED_C/EP_LLDriver/Core/Lib/Driver/rcc/hal_clock.h:
+
+D:/07_Source/embedded_01/EMBED_C/EP_LLDriver/Core/Lib/Driver/timer/hal_timer.h:
+
+D:/07_Source/embedded_01/EMBED_C/EP_LLDriver/Core/Lib/Driver/dma/hal_dma.h:
+
+D:/07_Source/embedded_01/EMBED_C/EP_LLDriver/Core/Lib/Driver/uart/hal_uart.h:

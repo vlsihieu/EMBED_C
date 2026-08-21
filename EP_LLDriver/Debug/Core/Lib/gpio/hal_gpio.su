@@ -1,9 +1,0 @@
-hal_gpio.c:93:6:GPIO_Init_t	56	static
-hal_gpio.c:294:6:GPIO_DeInit_t	40	static
-hal_gpio.c:334:6:GPIO_WritePin_t	16	static
-hal_gpio.c:353:6:GPIO_Toggle_t	24	static
-hal_gpio.c:370:18:GPIO_ReadPin_t	16	static
-hal_gpio.c:388:23:GPIO_LockPin_t	24	static
-hal_gpio.c:415:6:AFIO_RemapConfig_t	24	static
-hal_gpio.c:600:6:GPIO_EXTI_IRQHandler_t	16	static
-hal_gpio.c:619:6:GPIO_EXTI_Callback_t	16	static

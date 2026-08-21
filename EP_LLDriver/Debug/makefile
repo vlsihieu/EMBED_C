@@ -12,9 +12,12 @@ RM := rm -rf
 -include Drivers/STM32F1xx_HAL_Driver/Src/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
--include Core/Lib/timer/subdir.mk
--include Core/Lib/rcc/subdir.mk
--include Core/Lib/gpio/subdir.mk
+-include Core/Lib/Driver/uart/subdir.mk
+-include Core/Lib/Driver/timer/subdir.mk
+-include Core/Lib/Driver/spi/subdir.mk
+-include Core/Lib/Driver/rcc/subdir.mk
+-include Core/Lib/Driver/gpio/subdir.mk
+-include Core/Lib/Driver/dma/subdir.mk
 -include subdir.mk
 -include objects.mk
 
@@ -64,8 +67,8 @@ all: main-build
 main-build: EP_LLDriver.elf secondary-outputs
 
 # Tool invocations
-EP_LLDriver.elf: $(OBJS) $(USER_OBJS) C:\Users\hieuk\Downloads\EMBED_C-develop\EMBED_C-develop\EP_LLDriver\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "EP_LLDriver.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\hieuk\Downloads\EMBED_C-develop\EMBED_C-develop\EP_LLDriver\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="EP_LLDriver.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+EP_LLDriver.elf: $(OBJS) $(USER_OBJS) D:\07_Source\embedded_01\EMBED_C\EP_LLDriver\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "EP_LLDriver.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"D:\07_Source\embedded_01\EMBED_C\EP_LLDriver\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="EP_LLDriver.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
