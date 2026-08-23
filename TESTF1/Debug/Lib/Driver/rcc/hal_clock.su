@@ -1,0 +1,10 @@
+../Lib/Driver/rcc/hal_clock.c:87:6:HALx_SYSTICK_Config	16	static
+../Lib/Driver/rcc/hal_clock.c:111:20:HAL_CLOCK_ConfigHSE	32	static
+../Lib/Driver/rcc/hal_clock.c:205:20:HAL_CLOCK_ConfigHSI	32	static
+../Lib/Driver/rcc/hal_clock.c:301:6:HAL_CLOCK_DeInit	16	static
+../Lib/Driver/rcc/hal_clock.c:350:6:HAL_CLOCK_AHB_Peripheral_Enable	16	static
+../Lib/Driver/rcc/hal_clock.c:358:6:HAL_CLOCK_AHB_Peripheral_Disable	16	static
+../Lib/Driver/rcc/hal_clock.c:366:6:HAL_CLOCK_APB2_Peripheral_Enable	16	static
+../Lib/Driver/rcc/hal_clock.c:374:6:HAL_CLOCK_APB2_Peripheral_Disable	16	static
+../Lib/Driver/rcc/hal_clock.c:382:6:HAL_CLOCK_APB1_Peripheral_Enable	16	static
+../Lib/Driver/rcc/hal_clock.c:390:6:HAL_CLOCK_APB1_Peripheral_Disable	16	static
