@@ -37,15 +37,6 @@ extern "C" {
  *                                                   LOCAL MACROS
  **********************************************************************************************************************/
 
-/* EXTI peripheral register map base */
-#define EXTI_BASE_ADDR              (0x40010400U)
-#define EXTI_IMR                    (*(volatile uint32_t *)(EXTI_BASE_ADDR + 0x00U))
-#define EXTI_EMR                    (*(volatile uint32_t *)(EXTI_BASE_ADDR + 0x04U))
-#define EXTI_RTSR                   (*(volatile uint32_t *)(EXTI_BASE_ADDR + 0x08U))
-#define EXTI_FTSR                   (*(volatile uint32_t *)(EXTI_BASE_ADDR + 0x0CU))
-#define EXTI_SWIER                  (*(volatile uint32_t *)(EXTI_BASE_ADDR + 0x10U))
-#define EXTI_PR                     (*(volatile uint32_t *)(EXTI_BASE_ADDR + 0x14U))
-
 /***********************************************************************************************************************
  *                                                      EXTERN
  **********************************************************************************************************************/
@@ -84,6 +75,9 @@ extern "C" {
  * @param  GPIOx: where x can be (A..E) to select the GPIO peripheral.
  * @param  GPIO_Init: pointer to a GPIO_InitTypeDef structure that contains
  *         the configuration information for the specified GPIO pins.
+ * @req    FR-GPIO-001 ~ FR-GPIO-024
+ * @req    HWR-GPIO-003, HWR-GPIO-004, HWR-GPIO-007, HWR-GPIO-008, HWR-GPIO-010, HWR-GPIO-011, HWR-GPIO-012, HWR-GPIO-013
+ * @req    NFR-GPIO-002, NFR-GPIO-004, NFR-GPIO-005
  * @retval None
  */
 void GPIO_Init_t(GPIOx_typedef_t *GPIOx, GPIOx_InitTypeDef_t *GPIO_Init)
@@ -101,7 +95,7 @@ void GPIO_Init_t(GPIOx_typedef_t *GPIOx, GPIOx_InitTypeDef_t *GPIO_Init)
    /* Stores MODE and CNF configuration bits for the current pin */
    uint32_t configbits = 0x00U;
 
-   /* Pointer to GPIO configuration register (CRL for pins 0–7, CRH for pins 8–15) */
+   /* Pointer to GPIO configuration register (CRL for pins 0-7, CRH for pins 8-15) */
    volatile uint32_t *configregister;
 
    /* Check the parameters */
@@ -285,6 +279,9 @@ void GPIO_Init_t(GPIOx_typedef_t *GPIOx, GPIOx_InitTypeDef_t *GPIO_Init)
  * @param  GPIOx: Pointer to GPIO peripheral.
  * @param  GPIO_Pin: Specifies the GPIO pin to be de-initialized.
  *         This parameter can be GPIO_PIN_x.
+ * @req    FR-GPIO-025, FR-GPIO-026
+ * @req    HWR-GPIO-003, HWR-GPIO-011, HWR-GPIO-012, HWR-GPIO-013
+ * @req    NFR-GPIO-002, NFR-GPIO-004
  * @retval None
  */
 void GPIO_DeInit_t(GPIOx_typedef_t *GPIOx, uint16_t GPIO_Pin)
@@ -325,6 +322,9 @@ void GPIO_DeInit_t(GPIOx_typedef_t *GPIOx, uint16_t GPIO_Pin)
  *         This parameter can be GPIO_PIN_x.
  * @param  State: Specifies the value to be written to the selected pin.
  *         This parameter can be HIGH or LOW.
+ * @req    FR-GPIO-027, FR-GPIO-028
+ * @req    HWR-GPIO-005
+ * @req    NFR-GPIO-003
  * @retval None
  */
 void GPIO_WritePin_t(GPIOx_typedef_t *GPIOx, uint16_t GPIO_Pin, GPIOx_PinState_t State)
@@ -344,6 +344,9 @@ void GPIO_WritePin_t(GPIOx_typedef_t *GPIOx, uint16_t GPIO_Pin, GPIOx_PinState_t
  * @param  GPIOx: Pointer to GPIO peripheral.
  * @param  GPIO_Pin: Specifies the GPIO pin to be toggled.
  *         This parameter can be GPIO_PIN_x.
+ * @req    FR-GPIO-029
+ * @req    HWR-GPIO-005
+ * @req    NFR-GPIO-011
  * @retval None
  */
 void GPIO_Toggle_t(GPIOx_typedef_t *GPIOx, uint16_t GPIO_Pin)
@@ -361,6 +364,9 @@ void GPIO_Toggle_t(GPIOx_typedef_t *GPIOx, uint16_t GPIO_Pin)
  * @param  GPIOx: Pointer to GPIO peripheral.
  * @param  GPIO_Pin: Specifies the GPIO pin to be read.
  *         This parameter can be GPIO_PIN_x.
+ * @req    FR-GPIO-030
+ * @req    HWR-GPIO-005
+ * @req    NFR-GPIO-002
  * @retval GPIO_PinState_t: The input pin state.
  */
 GPIOx_PinState_t GPIO_ReadPin_t(GPIOx_typedef_t *GPIOx, uint16_t GPIO_Pin)
@@ -377,6 +383,9 @@ GPIOx_PinState_t GPIO_ReadPin_t(GPIOx_typedef_t *GPIOx, uint16_t GPIO_Pin)
  * @param  GPIOx: Pointer to GPIO peripheral.
  * @param  GPIO_Pin: Specifies the GPIO pin to be locked.
  *         This parameter can be GPIO_PIN_x.
+ * @req    FR-GPIO-031, FR-GPIO-032
+ * @req    HWR-GPIO-014
+ * @req    NFR-GPIO-009
  * @retval GPIO_StatusTypeDef_t:
  *         - STD_OK: GPIO pin configuration locked successfully
  *         - STD_ERROR: Lock sequence failed
@@ -405,6 +414,9 @@ GPIOx_StatusTypeDef_t GPIO_LockPin_t(GPIOx_typedef_t *GPIOx, uint16_t GPIO_Pin)
 /**
  * @brief  Configures the peripheral pin remapping (AFIO).
  * @param  Remap: Remap option from the AFIO_Remap_t enumeration.
+ * @req    FR-GPIO-033 ~ FR-GPIO-037
+ * @req    HWR-GPIO-010, HWR-GPIO-015
+ * @req    NFR-GPIO-004, NFR-GPIO-006, NFR-GPIO-009
  * @retval None
  * @note   This function preserves the SWD/JTAG debug configuration to prevent device lockout.
  */
@@ -417,7 +429,7 @@ void AFIO_RemapConfig_t(AFIOx_Remap_t Remap)
    uint32_t tmpreg = AFIOx->MAPR;
 
    /* 3. Read bit SWJ of register (bit [26:24]) */
-   uint32_t swj_config = tmpreg & (0x07U << POSITION_GPIOx_AFIO_MAPR_SWJ);
+   uint32_t swj_config = tmpreg & (0x07U << GPIOx_AFIO_MAPR_SWJ);
 
     /**
     * @note  Encoding format:
@@ -448,15 +460,15 @@ void AFIO_RemapConfig_t(AFIOx_Remap_t Remap)
    {
 
        /* case 1: the user wants to change to dirrectly mode Debug SWJ */
-       tmpreg &= ~(0x07U << POSITION_GPIOx_AFIO_MAPR_SWJ);          /* Clear old SWJ bits */
-       tmpreg |= (uint32_t)Remap << POSITION_GPIOx_AFIO_MAPR_SWJ;   /* Write new config SWJ into bit [26:24] */
+       tmpreg &= ~(0x07U << GPIOx_AFIO_MAPR_SWJ);          /* Clear old SWJ bits */
+       tmpreg |= (uint32_t)Remap << GPIOx_AFIO_MAPR_SWJ;   /* Write new config SWJ into bit [26:24] */
    }
    else
    {
 
        /* Case 2: Config function Remap for perhipheral */
        /* Clear old SWJ bits */
-       tmpreg &= ~(0x07U << POSITION_GPIOx_AFIO_MAPR_SWJ);
+       tmpreg &= ~(0x07U << GPIOx_AFIO_MAPR_SWJ);
 
        switch (Remap)
        {
@@ -590,6 +602,9 @@ void AFIO_RemapConfig_t(AFIOx_Remap_t Remap)
  *         This function should be called from the corresponding EXTIx_IRQHandler().
  * @param  GPIO_Pin: GPIO pin connected to the EXTI line.
  *         This parameter can be GPIO_PIN_x.
+ * @req    FR-GPIO-038, FR-GPIO-039, FR-GPIO-040
+ * @req    HWR-GPIO-012, HWR-GPIO-013
+ * @req    NFR-GPIO-012
  * @retval None
  * @note   Call this function when using a custom interrupt vector.
  */
@@ -609,6 +624,8 @@ void GPIO_EXTI_IRQHandler_t(uint16_t GPIO_Pin)
 /**
  * @brief  Weak interrupt callback function.
  * @param  GPIO_Pin: GPIO pin that triggered the interrupt.
+ * @req    FR-GPIO-041
+ * @req    NFR-GPIO-013
  * @retval None
  * @note   Call this function when using a custom interrupt vector.
  */

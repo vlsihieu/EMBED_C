@@ -35,7 +35,11 @@ extern "C" {
  *                                                     MACROS
  **********************************************************************************************************************/
 
-/* GPIO pin x mask */
+/**
+ * @brief  GPIO pin selection masks.
+ * @req    HWR-GPIO-002
+ * @req    FR-GPIO-003, FR-GPIO-005
+ */
 #define GPIOx_PIN_0                 ((uint16_t)0x0001)  /* Pin 0 selected    */
 #define GPIOx_PIN_1                 ((uint16_t)0x0002)  /* Pin 1 selected    */
 #define GPIOx_PIN_2                 ((uint16_t)0x0004)  /* Pin 2 selected    */
@@ -56,7 +60,11 @@ extern "C" {
 
 #define GPIOx_PIN_MASK               (0xFFFFu)
 
-/* Assertion macros */
+/**
+ * @brief  GPIO parameter validation macros.
+ * @req    FR-GPIO-002, FR-GPIO-003, FR-GPIO-004
+ * @req    NFR-GPIO-005
+ */
 #define ASSET_GPIO_PIN_ACTION(ACTION) (((ACTION) == LOW) || ((ACTION) == HIGH))
 
 #define ASSET_GPIO_PIN(PIN)         (((((uint32_t)PIN) & GPIO_PIN_MASK) != 0x00u) && \
@@ -68,12 +76,21 @@ extern "C" {
                                            ((INSTANCE) == GPIOD) || \
                                            ((INSTANCE) == GPIOE))
 
-/* Bit definition for GPIO_LCKR register */
+/**
+ * @brief  GPIO configuration lock register definitions.
+ * @req    HWR-GPIO-014
+ * @req    FR-GPIO-031, FR-GPIO-032
+ */
 #define GPIOx_LCKR_LCKK_Pos         (16U)
 #define GPIOx_LCKR_LCKK_Msk         (0x1UL << GPIOx_LCKR_LCKK_Pos)
 #define GPIOx_LCKR_LCKK             GPIOx_LCKR_LCKK_Msk
 
-/* GPIO Mode configurations (Basic Modes) */
+/**
+ * @brief  GPIO basic operating mode definitions.
+ * @req    HWR-GPIO-004, HWR-GPIO-007
+ * @req    FR-GPIO-007, FR-GPIO-008, FR-GPIO-009
+ * @req    FR-GPIO-010, FR-GPIO-011, FR-GPIO-012
+ */
 #define GPIOx_MODE_INPUT            (0x00000000U)      /* Input Floating Mode */
 #define GPIOx_MODE_AF_INPUT         GPIOx_MODE_INPUT   /* Alternate Function Input Mode */
 #define GPIOx_MODE_ANALOG           (0x00000003U)      /* Analog Mode */
@@ -82,7 +99,12 @@ extern "C" {
 #define GPIOx_MODE_AF_PP            (0x00000002U)      /* Alternate Function Output Push-Pull Mode */
 #define GPIOx_MODE_AF_OD            (0x00000012U)      /* Alternate Function Output Open-Drain Mode */
 
-/* GPIO Mode configurations (EXTI Interrupt & Event) */
+/**
+ * @brief  GPIO EXTI interrupt and event mode definitions.
+ * @req    HWR-GPIO-011, HWR-GPIO-012, HWR-GPIO-013
+ * @req    FR-GPIO-016, FR-GPIO-020, FR-GPIO-021
+ * @req    FR-GPIO-022, FR-GPIO-023, FR-GPIO-024
+ */
 #define GPIOx_MODE_IT_RISING             (0x10110000U)  ///< Interrupt Mode with Rising edge trigger
 #define GPIOx_MODE_IT_FALLING            (0x10210000U)  ///< Interrupt Mode with Falling edge trigger
 #define GPIOx_MODE_IT_RISING_FALLING     (0x10310000U)  ///< Interrupt Mode with Both edge trigger
@@ -90,28 +112,51 @@ extern "C" {
 #define GPIOx_MODE_EVT_FALLING           (0x10220000U)  ///< Event Mode with Falling edge trigger
 #define GPIOx_MODE_EVT_RISING_FALLING    (0x10320000U)  ///< Event Mode with Both edge trigger
 
-/* GPIO Output Speed definitions */
+/**
+ * @brief  GPIO output speed definitions.
+ * @req    HWR-GPIO-008
+ * @req    FR-GPIO-015
+ */
 #define GPIOx_SPEED_FREQ_LOW        (0x02U) /* Max Speed 2MHz  */
 #define GPIOx_SPEED_FREQ_MEDIUM     (0x01U) /* Max Speed 10MHz */
 #define GPIOx_SPEED_FREQ_HIGH       (0x03U) /* Max Speed 50MHz */
 
-/* GPIO Pull-Up / Pull-Down definitions */
+/**
+ * @brief  GPIO input pull configuration definitions.
+ * @req    HWR-GPIO-007
+ * @req    FR-GPIO-012, FR-GPIO-013, FR-GPIO-014, FR-GPIO-017
+ */
 #define GPIOx_NOPULL                (0x00U)
 #define GPIOx_PULLUP                (0x01U)
 #define GPIOx_PULLDOWN              (0x02U)
 
-/* AFIO mask definitions */
-#define POSITION_GPIOx_AFIO_MAPR_SWJ (24U)      /* SWJ_CFG bit position in AFIO_MAPR */
+/**
+ * @brief  AFIO remap encoding definitions.
+ * @req    HWR-GPIO-015
+ * @req    FR-GPIO-034, FR-GPIO-035, FR-GPIO-036
+ * @req    NFR-GPIO-006
+ */
+#define GPIOx_AFIO_MAPR_SWJ (24U)      /* SWJ_CFG bit position in AFIO_MAPR */
 #define GPIOx_AFIO_REMAP_GROUP_MASK (0xF0U)      /* Bits[7:4]: Peripheral group */
 
-/* GPIO Mode Encoding */
+/**
+ * @brief  Internal GPIO EXTI/Event mode encoding.
+ * @req    HWR-GPIO-012, HWR-GPIO-013
+ * @req    FR-GPIO-016, FR-GPIO-020, FR-GPIO-021
+ * @req    FR-GPIO-022, FR-GPIO-023, FR-GPIO-024
+ */
 #define GPIOx_MODE_CATEGORY_MASK    (0x10000000U) /* Bit[28]: Basic GPIO / EXTI-Event */
 #define GPIOx_MODE_TRIGGER_MASK     (0x00300000U) /* Bits[21:20]: Trigger selection */
 #define GPIOx_MODE_RISING_EDGE      (0x00100000U) /* Rising-edge trigger */
 #define GPIOx_MODE_FALLING_EDGE     (0x00200000U) /* Falling-edge trigger */
 #define GPIOx_MODE_EVENT            (0x00020000U) /* Event request */
 
-/* Register GPIO_AFIO_MAPR bit definitions */
+/**
+ * @brief  AFIO_MAPR peripheral remap bit definitions.
+ * @req    HWR-GPIO-015
+ * @req    FR-GPIO-034, FR-GPIO-035, FR-GPIO-036, FR-GPIO-037
+ * @req    NFR-GPIO-004, NFR-GPIO-006
+ */
 #define GPIOx_BIT_AFIO_MAPR_SP1_REMAP               (0x1UL << 0U)
 #define GPIOx_BIT_AFIO_MAPR_I2C1_REMAP              (0x1UL << 1U)
 #define GPIOx_BIT_AFIO_MAPR_USART1_REMAP            (0x1UL << 2U)
@@ -129,7 +174,12 @@ extern "C" {
 #define GPIOx_BIT_AFIO_MAPR_CAN_REMAP               (0x03U << 13U)
 #define GPIOx_BIT_AFIO_MAPR_PARTIAL_CAN_REMAP       (0x02U << 13U)
 
-/* Register GPIO CRL/CRH MODE & CNF bit definitions */
+/**
+ * @brief  GPIO CRL/CRH MODE and CNF field definitions.
+ * @req    HWR-GPIO-003, HWR-GPIO-004, HWR-GPIO-007
+ * @req    FR-GPIO-006, FR-GPIO-007, FR-GPIO-008, FR-GPIO-009
+ * @req    FR-GPIO-010, FR-GPIO-011, FR-GPIO-012, FR-GPIO-013, FR-GPIO-014
+ */
 #define GPIOx_BIT_MODE_OUTPUT_PP                 (0x00UL << 2U)
 #define GPIOx_BIT_MODE_OUTPUT_OD                 (0x01UL << 2U)
 #define GPIOx_BIT_MODE_AF_PP                     (0x02UL << 2U)
@@ -144,6 +194,7 @@ extern "C" {
 
 /**
  * @brief  GPIO Pin State enum.
+ * @req    FR-GPIO-027, FR-GPIO-028, FR-GPIO-030
  */
 typedef enum
 {
@@ -153,6 +204,8 @@ typedef enum
 
 /**
  * @brief  GPIO Status enum.
+ * @req    FR-GPIO-032
+ * @req    NFR-GPIO-009
  */
 typedef enum
 {
@@ -164,6 +217,9 @@ typedef enum
 
 /**
  * @brief  AFIO Pin Remap configuration enum.
+ * @req    HWR-GPIO-015
+ * @req    FR-GPIO-034, FR-GPIO-035, FR-GPIO-036, FR-GPIO-037
+ * @req    NFR-GPIO-006
  */
 typedef enum
 {
@@ -201,6 +257,9 @@ typedef enum
 
 /**
  * @brief  GPIO Init structure definition.
+ * @req    FR-GPIO-001, FR-GPIO-003, FR-GPIO-004
+ * @req    FR-GPIO-015, FR-GPIO-017
+ * @req    HWR-GPIO-007, HWR-GPIO-008
  */
 typedef struct
 {
@@ -225,8 +284,8 @@ void GPIO_Toggle_t(GPIOx_typedef_t *GPIOx, uint16_t GPIO_Pin);
 void AFIO_RemapConfig_t(AFIOx_Remap_t Remap);
 void GPIO_EXTI_IRQHandler_t(uint16_t GPIO_Pin);
 void GPIO_EXTI_Callback_t(uint16_t GPIO_Pin);
-GPIOx_PinState_t        GPIO_ReadPin_t(GPIOx_typedef_t *GPIOx, uint16_t GPIO_Pin);
-GPIOx_StatusTypeDef_t   GPIO_LockPin_t(GPIOx_typedef_t *GPIOx, uint16_t GPIO_Pin);
+GPIOx_PinState_t GPIO_ReadPin_t(GPIOx_typedef_t *GPIOx, uint16_t GPIO_Pin);
+GPIOx_StatusTypeDef_t GPIO_LockPin_t(GPIOx_typedef_t *GPIOx, uint16_t GPIO_Pin);
 
 #ifdef __cplusplus
 }

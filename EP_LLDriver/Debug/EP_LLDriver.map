@@ -38,6 +38,14 @@ Discarded input sections
  .ARM.exidx     0x0000000000000000       0x10 c:/st/stm32cubeide_1.6.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.9-2020-q2-update.win32_1.5.0.202011040924/tools/bin/../lib/gcc/arm-none-eabi/9.3.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp/crt0.o
  .ARM.attributes
                 0x0000000000000000       0x1b c:/st/stm32cubeide_1.6.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.9-2020-q2-update.win32_1.5.0.202011040924/tools/bin/../lib/gcc/arm-none-eabi/9.3.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp/crt0.o
+ .text          0x0000000000000000        0x0 Core/Lib/Device/w25xx/hal_w25qxx.o
+ .data          0x0000000000000000        0x0 Core/Lib/Device/w25xx/hal_w25qxx.o
+ .bss           0x0000000000000000        0x0 Core/Lib/Device/w25xx/hal_w25qxx.o
+ .debug_line    0x0000000000000000        0x0 Core/Lib/Device/w25xx/hal_w25qxx.o
+ .debug_str     0x0000000000000000       0xf6 Core/Lib/Device/w25xx/hal_w25qxx.o
+ .comment       0x0000000000000000       0x54 Core/Lib/Device/w25xx/hal_w25qxx.o
+ .ARM.attributes
+                0x0000000000000000       0x33 Core/Lib/Device/w25xx/hal_w25qxx.o
  .text          0x0000000000000000        0x0 Core/Lib/Driver/dma/hal_dma.o
  .data          0x0000000000000000        0x0 Core/Lib/Driver/dma/hal_dma.o
  .bss           0x0000000000000000        0x0 Core/Lib/Driver/dma/hal_dma.o
@@ -78,8 +86,8 @@ Discarded input sections
                 0x0000000000000000       0x30 Core/Lib/Driver/gpio/hal_gpio.o
  .text.GPIO_EXTI_Callback_t
                 0x0000000000000000       0x14 Core/Lib/Driver/gpio/hal_gpio.o
- .debug_info    0x0000000000000000      0x743 Core/Lib/Driver/gpio/hal_gpio.o
- .debug_abbrev  0x0000000000000000      0x1a5 Core/Lib/Driver/gpio/hal_gpio.o
+ .debug_info    0x0000000000000000      0x74a Core/Lib/Driver/gpio/hal_gpio.o
+ .debug_abbrev  0x0000000000000000      0x1e5 Core/Lib/Driver/gpio/hal_gpio.o
  .debug_aranges
                 0x0000000000000000       0x60 Core/Lib/Driver/gpio/hal_gpio.o
  .debug_ranges  0x0000000000000000       0x50 Core/Lib/Driver/gpio/hal_gpio.o
@@ -128,11 +136,37 @@ Discarded input sections
  .text          0x0000000000000000        0x0 Core/Lib/Driver/spi/hal_spi.o
  .data          0x0000000000000000        0x0 Core/Lib/Driver/spi/hal_spi.o
  .bss           0x0000000000000000        0x0 Core/Lib/Driver/spi/hal_spi.o
- .debug_line    0x0000000000000000        0x0 Core/Lib/Driver/spi/hal_spi.o
- .debug_str     0x0000000000000000       0xf1 Core/Lib/Driver/spi/hal_spi.o
+ .text.SPI_WaitFlagTimeout
+                0x0000000000000000       0x4c Core/Lib/Driver/spi/hal_spi.o
+ .text.SPIx_Init_t
+                0x0000000000000000       0xcc Core/Lib/Driver/spi/hal_spi.o
+ .text.SPIx_DeInit_t
+                0x0000000000000000       0x30 Core/Lib/Driver/spi/hal_spi.o
+ .text.SPIx_Cmd_t
+                0x0000000000000000       0x36 Core/Lib/Driver/spi/hal_spi.o
+ .text.SPIx_Transmit_t
+                0x0000000000000000       0x9c Core/Lib/Driver/spi/hal_spi.o
+ .text.SPIx_Receive_t
+                0x0000000000000000       0xac Core/Lib/Driver/spi/hal_spi.o
+ .text.SPIx_TransmitReceive_t
+                0x0000000000000000       0xde Core/Lib/Driver/spi/hal_spi.o
+ .text.SPIx_EXTI_IRQHandler_t
+                0x0000000000000000       0x50 Core/Lib/Driver/spi/hal_spi.o
+ .text.SPIx_TxCpltCallback_t
+                0x0000000000000000       0x12 Core/Lib/Driver/spi/hal_spi.o
+ .text.SPIx_RxCpltCallback_t
+                0x0000000000000000       0x12 Core/Lib/Driver/spi/hal_spi.o
+ .debug_info    0x0000000000000000      0x845 Core/Lib/Driver/spi/hal_spi.o
+ .debug_abbrev  0x0000000000000000      0x219 Core/Lib/Driver/spi/hal_spi.o
+ .debug_aranges
+                0x0000000000000000       0x68 Core/Lib/Driver/spi/hal_spi.o
+ .debug_ranges  0x0000000000000000       0x58 Core/Lib/Driver/spi/hal_spi.o
+ .debug_line    0x0000000000000000      0x595 Core/Lib/Driver/spi/hal_spi.o
+ .debug_str     0x0000000000000000      0x991 Core/Lib/Driver/spi/hal_spi.o
  .comment       0x0000000000000000       0x54 Core/Lib/Driver/spi/hal_spi.o
+ .debug_frame   0x0000000000000000      0x18c Core/Lib/Driver/spi/hal_spi.o
  .ARM.attributes
-                0x0000000000000000       0x33 Core/Lib/Driver/spi/hal_spi.o
+                0x0000000000000000       0x2d Core/Lib/Driver/spi/hal_spi.o
  .text          0x0000000000000000        0x0 Core/Lib/Driver/timer/hal_timer.o
  .data          0x0000000000000000        0x0 Core/Lib/Driver/timer/hal_timer.o
  .bss           0x0000000000000000        0x0 Core/Lib/Driver/timer/hal_timer.o
@@ -796,6 +830,7 @@ Linker script and memory map
 LOAD c:/st/stm32cubeide_1.6.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.9-2020-q2-update.win32_1.5.0.202011040924/tools/bin/../lib/gcc/arm-none-eabi/9.3.1/thumb/v7-m/nofp/crti.o
 LOAD c:/st/stm32cubeide_1.6.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.9-2020-q2-update.win32_1.5.0.202011040924/tools/bin/../lib/gcc/arm-none-eabi/9.3.1/thumb/v7-m/nofp/crtbegin.o
 LOAD c:/st/stm32cubeide_1.6.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.9-2020-q2-update.win32_1.5.0.202011040924/tools/bin/../lib/gcc/arm-none-eabi/9.3.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp/crt0.o
+LOAD Core/Lib/Device/w25xx/hal_w25qxx.o
 LOAD Core/Lib/Driver/dma/hal_dma.o
 LOAD Core/Lib/Driver/gpio/hal_gpio.o
 LOAD Core/Lib/Driver/rcc/hal_clock.o

@@ -1,221 +1,250 @@
-/*
- * Define.h
- *
- *  Created on: May 6, 2026
- *      Author: hieuk
+/**
+ * @file    Define.h
+ * @brief   Hardware register map, structure definitions, and peripheral pointers for STM32.
+ * @date    May 6, 2026
+ * @author  hieuk
  */
 
 #ifndef LIB_COMMON_INC_DEFINE_H_
 #define LIB_COMMON_INC_DEFINE_H_
 
+#include <stdint.h> /* Standard C99 data types (uint32_t, uint8_t, ...) */
 
-/*
- * make library by ChucDao
- * congchuc289@gmail.com
- */
-#ifndef _LIBRARY_DEFINE_H_
-#define _LIBRARY_DEFINE_H_
+/* ========================================================================== */
+/*                      1. BASE ADDRESS DEFINITIONS                           */
+/* ========================================================================== */
 
-//#define FSMxC_Address     									0xA0000000
-//#define USBx_OTG_FS_Address      						    0x50000000
-//#define Ethernetx_Address       								0x40028000
-//#define CRCx_Address             							0x40023000
-//#define Flashx_Address   				         			0x40022000
-//#define RCCx_Address 										0x40021000
-//#define SDIOx_Address               							0x40018000
-//#define TIM11x_timer_Address      							0x40015400
-//#define TIM10x_timer_Address        							0x40015000
-//#define TIM9x_timer_Address            						0x40014C00
-//#define ADC3x_Address               							0x40013C00
-//#define USART1x_Address                						0x40013800
-//#define TIM8x_timer_Address            						0x40013400
-//#define SPI1x_Address                        				0x40013000
+/* --- AHB Bus Peripherals --- */
+#define DMA1x_Address                0x40020000U
+#define DMA2x_Address                0x40020400U
+#define RCCx_Address                 0x40021000U
+#define Flashx_Address               0x40022000U
 
-//#define ADC2x_Address                         				0x40012800
-//#define ADC1x_Address                     					0x40012400
-#define DMA2x_Address                				0x40020400
-#define DMA1x_Address               				0x40020000
-#define RCCx_Address 										    0x40021000
-#define GPIOx_Portx_G_Address               0x40012000
-#define GPIOx_Portx_F_Address               0x40011C00
-#define GPIOx_Portx_E_Address               0x40011800
-#define GPIOx_Portx_D_Address               0x40011400
-#define GPIOx_Portx_C_Address               0x40011000
-#define GPIOx_Portx_B_Address               0x40010C00
-#define GPIOx_Portx_A_Address               0x40010800
-#define AFIOx_Address                       0x40010000
-#define Flashx_Address   				         	  0x40022000
-#define TIM14x_timer_Address                0x40002000
-#define TIM13x_timer_Address                0x40001C00
-#define TIM12x_timer_Address                0x40001800
-#define TIM7x_timer_Address                 0x40001400
-#define TIM6x_timer_Address                 0x40001000
-#define TIM5x_timer_Address                 0x40000C00
-#define TIM4x_timer_Address                 0x40000800
-#define TIM3x_timer_Address                 0x40000400
-#define TIM2x_timer_Address                 0x40000000
-#define TIM1x_timer_Address                 0x40012C00
-#define UART5x_Address                      0x40005000
-#define UART4x_Address                      0x40004C00
-#define USART3x_Address                     0x40004800
-#define USART2x_Address                     0x40004400
-#define USART1x_Address                			0x40013800
-//#define EXTIx_Address                             			0x40010400
-//#define AFIOx_Address                                   	 	0x40010000
-//#define DACx_Address                                  		0x40007400
-//#define Powerx_control_PWR_Address                       	0x40007000
-//#define BKP_Address                                  		0x40006C00
-//#define bxCAN1_Address                               		0x40006400
-//#define bxCAN2_Address                                 		0x40006800
-//#define Shared_USB_CAN_SRAM_512_bytes_Address            	0x40006000
-//#define USB_device_FS_registers_Address                     0x40005C00
-//#define I2C2_Address                                        0x40005800
-//#define I2C1_Address                                        0x40005400
+/* --- APB2 Bus Peripherals --- */
+#define AFIOx_Address                0x40010000U
+#define EXTIx_Address                0x40010400U
+#define GPIOx_Portx_A_Address        0x40010800U
+#define GPIOx_Portx_B_Address        0x40010C00U
+#define GPIOx_Portx_C_Address        0x40011000U
+#define GPIOx_Portx_D_Address        0x40011400U
+#define GPIOx_Portx_E_Address        0x40011800U
+#define GPIOx_Portx_F_Address        0x40011C00U
+#define GPIOx_Portx_G_Address        0x40012000U
+#define TIM1x_timer_Address          0x40012C00U
+#define SPI1x_Address                0x40013000U
+#define USART1x_Address              0x40013800U
 
-//#define SPI3_I2S_Address                            		0x40003C00
-//#define SPI2_I2S_Address                              		0x40003800
-//#define IWDG_Address                                   		0x40003000
-//#define WWDG_Address                                    	0x40002C00
-//#define RTC_Address                                        	0x40002800
+/* --- APB1 Bus Peripherals --- */
+#define TIM2x_timer_Address          0x40000000U
+#define TIM3x_timer_Address          0x40000400U
+#define TIM4x_timer_Address          0x40000800U
+#define TIM5x_timer_Address          0x40000C00U
+#define TIM6x_timer_Address          0x40001000U
+#define TIM7x_timer_Address          0x40001400U
+#define TIM12x_timer_Address         0x40001800U
+#define TIM13x_timer_Address         0x40001C00U
+#define TIM14x_timer_Address         0x40002000U
+#define SPI2_I2S_Address             0x40003800U
+#define SPI3_I2S_Address             0x40003C00U
+#define USART2x_Address              0x40004400U
+#define USART3x_Address              0x40004800U
+#define UART4x_Address               0x40004C00U
+#define UART5x_Address               0x40005000U
 
 
-typedef enum
-{
-  STD_OK       = 0x00U,
-  STD_ERROR    = 0x01U,
-  STD_BUSY     = 0x02U,
-  STD_TIMEOUT  = 0x03U
-} HALx_StatusTypeDef;
+/* ========================================================================== */
+/*                      2. COMMON ENUMS                                       */
+/* ========================================================================== */
 
 /**
-* @brief GPIO register structure definition.
-*/
+ * @brief  HAL/Driver operation status definitions.
+ */
+typedef enum
+{
+  STD_OK       = 0x00U, /* Operation successful */
+  STD_ERROR    = 0x01U, /* Operation failed */
+  STD_BUSY     = 0x02U, /* Peripheral is busy */
+  STD_TIMEOUT  = 0x03U  /* Operation timeout */
+} HALx_StatusTypeDef;
+
+
+/* ========================================================================== */
+/*                      3. PERIPHERAL REGISTER STRUCTURES                     */
+/* ========================================================================== */
+
+/**
+ * @brief  GPIO register structure definition.
+ */
 typedef struct
 {
-   volatile uint32_t CRL;      /* GPIO config (Pin 0~7)  */
-   volatile uint32_t CRH;      /* GPIO config (Pin 8~15) */
-   volatile uint32_t IDR;      /* Read input state       */
-   volatile uint32_t ODR;      /* Read/write output      */
-   volatile uint32_t BSRR;     /* Atomic set/reset       */
-   volatile uint32_t BRR;      /* Reset output           */
-   volatile uint32_t LCKR;     /* Lock configuration     */
+   volatile uint32_t CRL;  /* Port configuration register low (Pins 0->7) */
+   volatile uint32_t CRH;  /* Port configuration register high (Pins 8->15) */
+   volatile uint32_t IDR;  /* Port input data register */
+   volatile uint32_t ODR;  /* Port output data register */
+   volatile uint32_t BSRR; /* Port bit set/reset register */
+   volatile uint32_t BRR;  /* Port bit reset register */
+   volatile uint32_t LCKR; /* Port configuration lock register */
 } GPIOx_typedef_t;
 
 /**
-* @brief AFIO register structure definition.
-*/
+ * @brief  AFIO (Alternate Function I/O) register structure definition.
+ */
 typedef struct
 {
-   volatile uint32_t EVCR;      /* Event control         */
-   volatile uint32_t MAPR;      /* Remap configuration   */
-   volatile uint32_t EXTICR1;   /* EXTI config (0~3)     */
-   volatile uint32_t EXTICR2;   /* EXTI config (4~7)     */
-   volatile uint32_t EXTICR3;   /* EXTI config (8~11)    */
-   volatile uint32_t EXTICR4;   /* EXTI config (12~15)   */
-   volatile uint32_t MAPR2;     /* Additional remap      */
+   volatile uint32_t EVCR;    /* Event control register */
+   volatile uint32_t MAPR;    /* AF remap and debug I/O configuration register */
+   volatile uint32_t EXTICR1; /* External interrupt configuration register 1 (Pins 0->3) */
+   volatile uint32_t EXTICR2; /* External interrupt configuration register 2 (Pins 4->7) */
+   volatile uint32_t EXTICR3; /* External interrupt configuration register 3 (Pins 8->11) */
+   volatile uint32_t EXTICR4; /* External interrupt configuration register 4 (Pins 12->15) */
+   volatile uint32_t MAPR2;   /* AF remap and debug I/O configuration register 2 */
 } AFIOx_typedef_t;
 
 /**
-* @brief TIMER register structure definition.
-*/
+ * @brief  TIM (Timer) register structure definition.
+ */
 typedef struct
 {
-    volatile uint32_t CR1;
-    volatile uint32_t CR2;
-    volatile uint32_t SMCR;
-    volatile uint32_t DIER;
-    volatile uint32_t SR;
-    volatile uint32_t EGR;
-    volatile uint32_t CCMR1;
-    volatile uint32_t CCMR2;
-    volatile uint32_t CCER;
-    volatile uint32_t CNT;
-    volatile uint32_t PSC;
-    volatile uint32_t ARR;
-    volatile uint32_t RCR;
-    volatile uint32_t CCR1;
-    volatile uint32_t CCR2;
-    volatile uint32_t CCR3;
-    volatile uint32_t CCR4;
-    volatile uint32_t BDTR;
-    volatile uint32_t DCR;
-    volatile uint32_t DMAR;
+    volatile uint32_t CR1;   /* Control register 1 */
+    volatile uint32_t CR2;   /* Control register 2 */
+    volatile uint32_t SMCR;  /* Slave mode control register */
+    volatile uint32_t DIER;  /* DMA/Interrupt enable register */
+    volatile uint32_t SR;    /* Status register */
+    volatile uint32_t EGR;   /* Event generation register */
+    volatile uint32_t CCMR1; /* Capture/compare mode register 1 */
+    volatile uint32_t CCMR2; /* Capture/compare mode register 2 */
+    volatile uint32_t CCER;  /* Capture/compare enable register */
+    volatile uint32_t CNT;   /* Counter register */
+    volatile uint32_t PSC;   /* Prescaler register */
+    volatile uint32_t ARR;   /* Auto-reload register */
+    volatile uint32_t RCR;   /* Repetition counter register */
+    volatile uint32_t CCR1;  /* Capture/compare register 1 */
+    volatile uint32_t CCR2;  /* Capture/compare register 2 */
+    volatile uint32_t CCR3;  /* Capture/compare register 3 */
+    volatile uint32_t CCR4;  /* Capture/compare register 4 */
+    volatile uint32_t BDTR;  /* Break and dead-time register */
+    volatile uint32_t DCR;   /* DMA control register */
+    volatile uint32_t DMAR;  /* DMA address for full transfer */
 } TIMx_TypeDef_t;
 
+/**
+ * @brief  DMA Channel register structure definition.
+ */
 typedef struct {
-    volatile uint32_t CCR;      /* Channel Configuration Register */
-    volatile uint32_t CNDTR;    /* Channel Number of Data Register */
-    volatile uint32_t CPAR;     /* Channel Peripheral Address Register */
-    volatile uint32_t CMAR;     /* Channel Memory Address Register */
-    volatile uint32_t RESERVED;
+    volatile uint32_t CCR;      /* DMA channel configuration register */
+    volatile uint32_t CNDTR;    /* DMA channel number of data register */
+    volatile uint32_t CPAR;     /* DMA channel peripheral address register */
+    volatile uint32_t CMAR;     /* DMA channel memory address register */
+    volatile uint32_t RESERVED; /* Reserved memory space */
 } DMAx_Channel_TypeDef_t;
 
+/**
+ * @brief  DMA Global register structure definition.
+ */
 typedef struct {
-    volatile uint32_t ISR;      /* Interrupt Status Register */
-    volatile uint32_t IFCR;     /* Interrupt Flag Clear Register */
+    volatile uint32_t ISR;  /* DMA interrupt status register */
+    volatile uint32_t IFCR; /* DMA interrupt flag clear register */
 } DMAx_TypeDef_t;
 
+/**
+ * @brief  USART/UART register structure definition.
+ */
 typedef struct {
-    volatile uint32_t SR;     
-    volatile uint32_t DR;     
-    volatile uint32_t BRR;    
-    volatile uint32_t CR1;    
-    volatile uint32_t CR2;    
-    volatile uint32_t CR3;    
-    volatile uint32_t GTPR;   
+    volatile uint32_t SR;   /* Status register */
+    volatile uint32_t DR;   /* Data register */
+    volatile uint32_t BRR;  /* Baud rate register */
+    volatile uint32_t CR1;  /* Control register 1 */
+    volatile uint32_t CR2;  /* Control register 2 */
+    volatile uint32_t CR3;  /* Control register 3 */
+    volatile uint32_t GTPR; /* Guard time and prescaler register */
 } USARTx_TypeDef_t;
 
-#define TIM1x   ((TIMx_TypeDef_t *) TIM1x_timer_Address)
-#define TIM2x   ((TIMx_TypeDef_t *) TIM2x_timer_Address)
-#define TIM3x   ((TIMx_TypeDef_t *) TIM3x_timer_Address)
-#define TIM4x   ((TIMx_TypeDef_t *) TIM4x_timer_Address)
-#define TIM5x   ((TIMx_TypeDef_t *) TIM5x_timer_Address)
-#define TIM6x   ((TIMx_TypeDef_t *) TIM6x_timer_Address)
-#define TIM7x   ((TIMx_TypeDef_t *) TIM7x_timer_Address)
-#define TIM12x  ((TIMx_TypeDef_t *) TIM12x_timer_Address)
-#define TIM13x  ((TIMx_TypeDef_t *) TIM13x_timer_Address)
-#define TIM14x  ((TIMx_TypeDef_t *) TIM14x_timer_Address)
+/**
+ * @brief  SPI register structure definition.
+ */
+typedef struct
+{
+  volatile uint32_t CR1;     /* Control register 1 */
+  volatile uint32_t CR2;     /* Control register 2 */
+  volatile uint32_t SR;      /* Status register */
+  volatile uint32_t DR;      /* Data register */
+  volatile uint32_t CRCPR;   /* CRC polynomial register */
+  volatile uint32_t RXCRCR;  /* Rx CRC register */
+  volatile uint32_t TXCRCR;  /* Tx CRC register */
+  volatile uint32_t I2SCFGR; /* I2S configuration register */
+} SPIx_TypeDef;
 
 
-#define GPIOAx  ((GPIOx_typedef_t *)GPIOx_Portx_A_Address)
-#define GPIOBx  ((GPIOx_typedef_t *)GPIOx_Portx_B_Address)
-#define GPIOCx  ((GPIOx_typedef_t *)GPIOx_Portx_C_Address)
-#define GPIODx  ((GPIOx_typedef_t *)GPIOx_Portx_D_Address)
-#define GPIOEx  ((GPIOx_typedef_t *)GPIOx_Portx_E_Address)
-#define AFIOx   ((AFIOx_typedef_t *)AFIOx_Address)
+/* ========================================================================== */
+/*                      4. PERIPHERAL POINTER MACROS                          */
+/* ========================================================================== */
 
-#define DMA1x                   ((DMAx_TypeDef_t *)DMA1x_Address)
-#define DMA1x_Channel1          ((DMAx_Channel_TypeDef_t *)(DMA1x_Address + 0x0008U))
-#define DMA1x_Channel2          ((DMAx_Channel_TypeDef_t *)(DMA1x_Address + 0x001CU))
-#define DMA1x_Channel3          ((DMAx_Channel_TypeDef_t *)(DMA1x_Address + 0x0030U))
-#define DMA1x_Channel4          ((DMAx_Channel_TypeDef_t *)(DMA1x_Address + 0x0044U))
-#define DMA1x_Channel5          ((DMAx_Channel_TypeDef_t *)(DMA1x_Address + 0x0058U))
-#define DMA1x_Channel6          ((DMAx_Channel_TypeDef_t *)(DMA1x_Address + 0x006CU))
-#define DMA1x_Channel7          ((DMAx_Channel_TypeDef_t *)(DMA1x_Address + 0x0080U))
+/* --- GPIO Pointers --- */
+#define GPIOAx          ((GPIOx_typedef_t *)GPIOx_Portx_A_Address)
+#define GPIOBx          ((GPIOx_typedef_t *)GPIOx_Portx_B_Address)
+#define GPIOCx          ((GPIOx_typedef_t *)GPIOx_Portx_C_Address)
+#define GPIODx          ((GPIOx_typedef_t *)GPIOx_Portx_D_Address)
+#define GPIOEx          ((GPIOx_typedef_t *)GPIOx_Portx_E_Address)
+#define AFIOx           ((AFIOx_typedef_t *)AFIOx_Address)
 
-#define USART1x              ((USARTx_TypeDef_t *)USART1x_Address)
-#define USART2x              ((USARTx_TypeDef_t *)USART2x_Address)
-#define USART3x              ((USARTx_TypeDef_t *)USART3x_Address)
+/* --- Timer Pointers --- */
+#define TIM1x           ((TIMx_TypeDef_t *) TIM1x_timer_Address)
+#define TIM2x           ((TIMx_TypeDef_t *) TIM2x_timer_Address)
+#define TIM3x           ((TIMx_TypeDef_t *) TIM3x_timer_Address)
+#define TIM4x           ((TIMx_TypeDef_t *) TIM4x_timer_Address)
+#define TIM5x           ((TIMx_TypeDef_t *) TIM5x_timer_Address)
+#define TIM6x           ((TIMx_TypeDef_t *) TIM6x_timer_Address)
+#define TIM7x           ((TIMx_TypeDef_t *) TIM7x_timer_Address)
+#define TIM12x          ((TIMx_TypeDef_t *) TIM12x_timer_Address)
+#define TIM13x          ((TIMx_TypeDef_t *) TIM13x_timer_Address)
+#define TIM14x          ((TIMx_TypeDef_t *) TIM14x_timer_Address)
 
-/* Exported macro ------------------------------------------------------------*/
-#ifdef  USE_FULL_ASSERT
+/* --- DMA Pointers --- */
+#define DMA1x            ((DMAx_TypeDef_t *)DMA1x_Address)
+#define DMA1x_Channel1   ((DMAx_Channel_TypeDef_t *)(DMA1x_Address + 0x0008U))
+#define DMA1x_Channel2   ((DMAx_Channel_TypeDef_t *)(DMA1x_Address + 0x001CU))
+#define DMA1x_Channel3   ((DMAx_Channel_TypeDef_t *)(DMA1x_Address + 0x0030U))
+#define DMA1x_Channel4   ((DMAx_Channel_TypeDef_t *)(DMA1x_Address + 0x0044U))
+#define DMA1x_Channel5   ((DMAx_Channel_TypeDef_t *)(DMA1x_Address + 0x0058U))
+#define DMA1x_Channel6   ((DMAx_Channel_TypeDef_t *)(DMA1x_Address + 0x006CU))
+#define DMA1x_Channel7   ((DMAx_Channel_TypeDef_t *)(DMA1x_Address + 0x0080U))
+
+/* --- UART/USART Pointers --- */
+#define USART1x          ((USARTx_TypeDef_t *)USART1x_Address)
+#define USART2x          ((USARTx_TypeDef_t *)USART2x_Address)
+#define USART3x          ((USARTx_TypeDef_t *)USART3x_Address)
+
+/* --- SPI Pointers (Struct Pointer Cast) --- */
+#define SPI1x            ((SPIx_TypeDef *)SPI1x_Address)
+#define SPI2x            ((SPIx_TypeDef *)SPI2_I2S_Address)
+#define SPI3x            ((SPIx_TypeDef *)SPI3_I2S_Address)
+
+/* --- EXTI Direct Register Access --- */
+#define EXTI_IMR         (*(volatile uint32_t *)(EXTIx_Address + 0x00U)) /* Interrupt Mask Register */
+#define EXTI_EMR         (*(volatile uint32_t *)(EXTIx_Address + 0x04U)) /* Event Mask Register */
+#define EXTI_RTSR        (*(volatile uint32_t *)(EXTIx_Address + 0x08U)) /* Rising Trigger Selection Register */
+#define EXTI_FTSR        (*(volatile uint32_t *)(EXTIx_Address + 0x0CU)) /* Falling Trigger Selection Register */
+#define EXTI_SWIER       (*(volatile uint32_t *)(EXTIx_Address + 0x10U)) /* Software Interrupt Event Register */
+#define EXTI_PR          (*(volatile uint32_t *)(EXTIx_Address + 0x14U)) /* Pending Register */
+
+
+/* ========================================================================== */
+/*                      5. ASSERT MACRO DEFINITION                            */
+/* ========================================================================== */
+
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  The assert_param macro is used for function's parameters check.
   * @param  expr If expr is false, it calls assert_failed function
   *         which reports the name of the source file and the source
   *         line number of the call that failed.
   *         If expr is true, it returns no value.
-  * @retval None
   */
 #define assert_param(expr) ((expr) ? (void)0U : assert_failed((uint8_t *)__FILE__, __LINE__))
-/* Exported functions ------------------------------------------------------- */
+
 void assert_failed(uint8_t* file, uint32_t line);
 #else
 #define assert_param(expr) ((void)0U)
 #endif /* USE_FULL_ASSERT */
-
-
-#endif /* MY_LIBRARY_DEFINE_H_ */
-
 
 #endif /* LIB_COMMON_INC_DEFINE_H_ */

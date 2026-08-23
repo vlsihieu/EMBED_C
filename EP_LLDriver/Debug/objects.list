@@ -1,3 +1,4 @@
+"Core/Lib/Device/w25xx/hal_w25qxx.o"
 "Core/Lib/Driver/dma/hal_dma.o"
 "Core/Lib/Driver/gpio/hal_gpio.o"
 "Core/Lib/Driver/rcc/hal_clock.o"

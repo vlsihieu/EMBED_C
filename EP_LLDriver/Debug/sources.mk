@@ -20,6 +20,7 @@ OBJCOPY_BIN :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+Core/Lib/Device/w25xx \
 Core/Lib/Driver/dma \
 Core/Lib/Driver/gpio \
 Core/Lib/Driver/rcc \

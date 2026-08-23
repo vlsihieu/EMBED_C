@@ -18,6 +18,7 @@ RM := rm -rf
 -include Core/Lib/Driver/rcc/subdir.mk
 -include Core/Lib/Driver/gpio/subdir.mk
 -include Core/Lib/Driver/dma/subdir.mk
+-include Core/Lib/Device/w25xx/subdir.mk
 -include subdir.mk
 -include objects.mk
 
