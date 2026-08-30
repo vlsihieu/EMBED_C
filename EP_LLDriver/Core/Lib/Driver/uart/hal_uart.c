@@ -127,6 +127,19 @@ HALx_StatusTypeDef UARTx_Init(UARTx_HandleTypeDef *huart)
         return STD_ERROR;
     }
 
+    if (huart->Instance == USART1x)
+    {
+      RCC->APB2ENR |= (1U << 14);   // USART1EN
+    }
+    else if (huart->Instance == USART2x)
+    {
+      RCC->APB1ENR |= (1U << 17);   // USART2EN
+    }
+    else if (huart->Instance == USART3x)
+    {
+      RCC->APB1ENR |= (1U << 18);   // USART3EN
+    }
+
     /* Disable USART prior to configuration */
     huart->Instance->CR1 &= ~USARTx_CR1_UE;
 

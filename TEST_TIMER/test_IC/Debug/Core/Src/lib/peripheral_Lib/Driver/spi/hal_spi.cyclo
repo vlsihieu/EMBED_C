@@ -1,0 +1,10 @@
+../Core/Src/lib/peripheral_Lib/Driver/spi/hal_spi.c:77:27:SPI_WaitFlagTimeout	3
+../Core/Src/lib/peripheral_Lib/Driver/spi/hal_spi.c:107:6:SPIx_Init_t	5
+../Core/Src/lib/peripheral_Lib/Driver/spi/hal_spi.c:191:6:SPIx_DeInit_t	1
+../Core/Src/lib/peripheral_Lib/Driver/spi/hal_spi.c:211:6:SPIx_Cmd_t	2
+../Core/Src/lib/peripheral_Lib/Driver/spi/hal_spi.c:237:20:SPIx_Transmit_t	6
+../Core/Src/lib/peripheral_Lib/Driver/spi/hal_spi.c:287:20:SPIx_Receive_t	7
+../Core/Src/lib/peripheral_Lib/Driver/spi/hal_spi.c:344:20:SPIx_TransmitReceive_t	9
+../Core/Src/lib/peripheral_Lib/Driver/spi/hal_spi.c:401:6:SPIx_EXTI_IRQHandler_t	5
+../Core/Src/lib/peripheral_Lib/Driver/spi/hal_spi.c:427:6:SPIx_TxCpltCallback_t	1
+../Core/Src/lib/peripheral_Lib/Driver/spi/hal_spi.c:438:6:SPIx_RxCpltCallback_t	1

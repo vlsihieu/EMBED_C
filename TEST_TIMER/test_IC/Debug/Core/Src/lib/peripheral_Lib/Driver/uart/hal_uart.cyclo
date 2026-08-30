@@ -1,0 +1,14 @@
+../Core/Src/lib/peripheral_Lib/Driver/uart/hal_uart.c:70:17:UARTx_GetPCLK	2
+../Core/Src/lib/peripheral_Lib/Driver/uart/hal_uart.c:95:13:UARTx_SetBaudRate	2
+../Core/Src/lib/peripheral_Lib/Driver/uart/hal_uart.c:123:20:UARTx_Init	6
+../Core/Src/lib/peripheral_Lib/Driver/uart/hal_uart.c:185:20:UARTx_Transmit	9
+../Core/Src/lib/peripheral_Lib/Driver/uart/hal_uart.c:228:20:UARTx_Receive	7
+../Core/Src/lib/peripheral_Lib/Driver/uart/hal_uart.c:260:20:UARTx_Transmit_IT	5
+../Core/Src/lib/peripheral_Lib/Driver/uart/hal_uart.c:289:20:UARTx_Receive_IT	5
+../Core/Src/lib/peripheral_Lib/Driver/uart/hal_uart.c:318:20:UARTx_Transmit_DMA	4
+../Core/Src/lib/peripheral_Lib/Driver/uart/hal_uart.c:341:20:UARTx_Receive_DMA	4
+../Core/Src/lib/peripheral_Lib/Driver/uart/hal_uart.c:362:20:UARTx_DMAStop	2
+../Core/Src/lib/peripheral_Lib/Driver/uart/hal_uart.c:379:6:UARTx_IRQHandler	10
+../Core/Src/lib/peripheral_Lib/Driver/uart/hal_uart.c:431:6:UARTx_DMA_IRQHandler	3
+../Core/Src/lib/peripheral_Lib/Driver/uart/hal_uart.c:455:28:UARTx_TxCpltCallback	1
+../Core/Src/lib/peripheral_Lib/Driver/uart/hal_uart.c:465:28:UARTx_RxCpltCallback	1

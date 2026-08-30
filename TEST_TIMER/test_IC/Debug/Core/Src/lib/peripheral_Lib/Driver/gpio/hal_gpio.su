@@ -1,0 +1,9 @@
+../Core/Src/lib/peripheral_Lib/Driver/gpio/hal_gpio.c:83:6:GPIO_Init_t	56	static
+../Core/Src/lib/peripheral_Lib/Driver/gpio/hal_gpio.c:287:6:GPIO_DeInit_t	40	static
+../Core/Src/lib/peripheral_Lib/Driver/gpio/hal_gpio.c:330:6:GPIO_WritePin_t	16	static
+../Core/Src/lib/peripheral_Lib/Driver/gpio/hal_gpio.c:352:6:GPIO_Toggle_t	24	static
+../Core/Src/lib/peripheral_Lib/Driver/gpio/hal_gpio.c:372:18:GPIO_ReadPin_t	16	static
+../Core/Src/lib/peripheral_Lib/Driver/gpio/hal_gpio.c:393:23:GPIO_LockPin_t	24	static
+../Core/Src/lib/peripheral_Lib/Driver/gpio/hal_gpio.c:423:6:AFIO_RemapConfig_t	24	static
+../Core/Src/lib/peripheral_Lib/Driver/gpio/hal_gpio.c:611:6:GPIO_EXTI_IRQHandler_t	16	static
+../Core/Src/lib/peripheral_Lib/Driver/gpio/hal_gpio.c:632:6:GPIO_EXTI_Callback_t	16	static
