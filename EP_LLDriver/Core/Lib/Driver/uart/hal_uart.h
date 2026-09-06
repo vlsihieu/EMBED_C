@@ -1,17 +1,17 @@
 /***********************************************************************************************************************
  * Project Name: STM32F103_BareMetal_Drivers
- * 
- * File Name:    hal_uart.h
  *
- * Description:  HAL UART Driver — Data types, register structures, bitmasks,
- *               and API prototypes for Universal Synchronous Asynchronous
- *               Receiver Transmitter (USART/UART) peripheral on STM32F103xB devices.
- * 
- * Compiler:     GCC
+ * File Name: hal_uart.h
+ *
+ * Description: HAL UART Driver - Data types, configuration structures and API prototypes
+ *              for STM32F103xB USART peripherals.
+ *
+ * Compiler: GCC
  *
  * Revision:
- *               Version        Date                Change History
- *               1.0.0          21/08/2026          Initial release for STM32F103xB UART Module
+ *              Version         Date                Change History
+ *              1.0.0           10/08/2026          Initial release for STM32F103xB UART Module
+ *              2.0.0           04/09/2026          Added optimized RX Ring Buffer support
  *
  **********************************************************************************************************************/
 
@@ -23,76 +23,43 @@ extern "C" {
 #endif
 
 /***********************************************************************************************************************
- *                                                 INCLUDES
+ *                                                    INCLUDES
  **********************************************************************************************************************/
 
 #include <stdint.h>
 #include <stddef.h>
+
 #include "hal_dma.h"
+#include "hal_ringbuffer.h"
 
 /***********************************************************************************************************************
  *                                                  MACROS
  **********************************************************************************************************************/
 
 /**
-  * @brief Check valid USART Instance macro
-  */
-#define IS_UARTx_INSTANCE(INSTANCE) (((INSTANCE) == USART1x) || \
-                                    ((INSTANCE) == USART2x) || \
-                                    ((INSTANCE) == USART3x))
-
-
-/**
-  * @brief USART Control Register Bit Definitions
-  */
-#define USARTx_CR1_UE                     (1U << 13U)   /* USART Enable */
-#define USARTx_CR1_M                      (1U << 12U)   /* Word Length */
-#define USARTx_CR1_PCE                    (1U << 10U)   /* Parity Control Enable */
-#define USARTx_CR1_PS                     (1U << 9U)    /* Parity Selection */
-#define USARTx_CR1_PEIE                   (1U << 8U)    /* PE Interrupt Enable */
-#define USARTx_CR1_TXEIE                  (1U << 7U)    /* TXE Interrupt Enable */
-#define USARTx_CR1_TCIE                   (1U << 6U)    /* TC Interrupt Enable */
-#define USARTx_CR1_RXNEIE                 (1U << 5U)    /* RXNE Interrupt Enable */
-#define USARTx_CR1_TE                     (1U << 3U)    /* Transmitter Enable */
-#define USARTx_CR1_RE                     (1U << 2U)    /* Receiver Enable */
-
-#define USARTx_CR2_STOP_MASK              (3U << 12U)   /* STOP bits mask */
-
-#define USARTx_CR3_RTSE                   (1U << 8U)    /* RTS Enable */
-#define USARTx_CR3_CTSE                   (1U << 9U)    /* CTS Enable */
-#define USARTx_CR3_DMAT                   (1U << 7U)    /* DMA Enable Transmitter */
-#define USARTx_CR3_DMAR                   (1U << 6U)    /* DMA Enable Receiver */
-
-#define USARTx_SR_TXE                     (1U << 7U)    /* Transmit data register empty */
-#define USARTx_SR_TC                      (1U << 6U)    /* Transmission Complete */
-#define USARTx_SR_RXNE                    (1U << 5U)    /* Read data register not empty */
-
-// /* Dummy System Clock for BaudRate Calculation (Default 8MHz PCLK2 / PCLK1 assuming 8MHz HSI/HSE) */
-// #ifndef PCLK1_FREQ
-// #define PCLK1_FREQ                        8000000U
-// #endif
-
-// #ifndef PCLK2_FREQ
-// #define PCLK2_FREQ                        8000000U
-// #endif
+ * @brief  Check valid USART instance.
+ */
+#define IS_UART_INSTANCE(INSTANCE)             (((INSTANCE) == USART1x) || \
+                                                ((INSTANCE) == USART2x) || \
+                                                ((INSTANCE) == USART3x))
 
 /***********************************************************************************************************************
  *                                   TYPEDEFS (STRUCTURES, UNIONS, ENUMS)
  **********************************************************************************************************************/
 
 /**
-  * @brief UART Word Length Configuration Enum
-  */
-typedef enum 
+ * @brief  UART Word Length Configuration Enum.
+ */
+typedef enum
 {
     UARTx_WordLength_8B = 0x00000000U,
     UARTx_WordLength_9B = (1U << 12U)
 } UARTx_WordLength_t;
 
 /**
-  * @brief UART Stop Bits Configuration Enum
-  */
-typedef enum 
+ * @brief  UART Stop Bits Configuration Enum.
+ */
+typedef enum
 {
     UARTx_StopBits_1   = 0x00000000U,
     UARTx_StopBits_0_5 = (1U << 12U),
@@ -101,9 +68,9 @@ typedef enum
 } UARTx_StopBits_t;
 
 /**
-  * @brief UART Parity Selection Enum
-  */
-typedef enum 
+ * @brief  UART Parity Selection Enum.
+ */
+typedef enum
 {
     UARTx_Parity_NONE  = 0x00000000U,
     UARTx_Parity_EVEN  = (1U << 10U),
@@ -113,9 +80,9 @@ typedef enum
 } UARTx_Parity_t;
 
 /**
-  * @brief UART Transfer Mode Selection Enum
-  */
-typedef enum 
+ * @brief  UART Transfer Mode Selection Enum.
+ */
+typedef enum
 {
     UARTx_Mode_RX    = (1U << 2U),
     UARTx_Mode_TX    = (1U << 3U),
@@ -123,9 +90,9 @@ typedef enum
 } UARTx_Mode_t;
 
 /**
-  * @brief UART Hardware Flow Control Enum
-  */
-typedef enum 
+ * @brief  UART Hardware Flow Control Enum.
+ */
+typedef enum
 {
     UARTx_HwFlowCtrl_NONE    = 0x00000000U,
     UARTx_HwFlowCtrl_RTS     = (1U << 8U),
@@ -134,59 +101,73 @@ typedef enum
 } UARTx_HwFlowCtl_t;
 
 /**
-  * @brief UART Status Flags Mask Enum
-  */
-typedef enum 
+ * @brief  UART Status Flags Mask Enum.
+ */
+typedef enum
 {
-    UARTx_Flag_PE   = (1U << 0U),   /* Parity Error Flag */
-    UARTx_Flag_FE   = (1U << 1U),   /* Framing Error Flag */
-    UARTx_Flag_NE   = (1U << 2U),   /* Noise Error Flag */
-    UARTx_Flag_ORE  = (1U << 3U),   /* Overrun Error Flag */
-    UARTx_Flag_IDLE = (1U << 4U),   /* IDLE line detected Flag */
-    UARTx_Flag_RXNE = (1U << 5U),   /* Read data register not empty Flag */
-    UARTx_Flag_TC   = (1U << 6U),   /* Transmission Complete Flag */
-    UARTx_Flag_TXE  = (1U << 7U),   /* Transmit data register empty Flag */
-    UARTx_Flag_CTS  = (1U << 9U)    /* CTS Flag */
+    UARTx_Flag_PE   = (1U << 0U),
+    UARTx_Flag_FE   = (1U << 1U),
+    UARTx_Flag_NE   = (1U << 2U),
+    UARTx_Flag_ORE  = (1U << 3U),
+    UARTx_Flag_IDLE = (1U << 4U),
+    UARTx_Flag_RXNE = (1U << 5U),
+    UARTx_Flag_TC   = (1U << 6U),
+    UARTx_Flag_TXE  = (1U << 7U),
+    UARTx_Flag_CTS  = (1U << 9U)
 } UART_Flag_t;
 
 /**
-  * @brief UART Initialization Parameters Structure
-  */
-typedef struct 
+ * @brief  UART Initialization Parameters Structure.
+ */
+typedef struct
 {
-    uint32_t            BaudRate;    /* Configures the UART communication baud rate */
-    UARTx_WordLength_t  WordLength;  /* Specifies the number of data bits transmitted/received */
-    UARTx_StopBits_t    StopBits;    /* Specifies the number of stop bits transmitted */
-    UARTx_Parity_t      Parity;      /* Specifies the parity mode */
-    UARTx_Mode_t        Mode;        /* Specifies whether Rx/Tx mode is enabled or disabled */
-    UARTx_HwFlowCtl_t   HwFlowCtl;   /* Specifies whether Hardware Flow Control is enabled */
+    uint32_t            BaudRate;       /*!< UART communication baud rate. */
+    UARTx_WordLength_t  WordLength;     /*!< Number of data bits transmitted/received. */
+    UARTx_StopBits_t    StopBits;       /*!< Number of stop bits. */
+    UARTx_Parity_t      Parity;         /*!< Parity configuration. */
+    UARTx_Mode_t        Mode;           /*!< RX, TX or TX/RX mode. */
+    UARTx_HwFlowCtl_t   HwFlowCtl;      /*!< RTS/CTS hardware flow control. */
 } UARTx_InitTypeDef;
 
 /**
-  * @brief UART DMA Configuration Handle Structure
-  */
-typedef struct 
+ * @brief  UART DMA Configuration Handle Structure.
+ */
+typedef struct
 {
-    DMAx_Channel_TypeDef_t *Channel;  /* Pointer to associated DMA Channel register base */
-    uint8_t                 IRQn;     /* NVIC Interrupt Vector Number for the DMA Channel */
+    DMAx_Channel_TypeDef_t *Channel;    /*!< Pointer to associated DMA channel. */
+    uint8_t                 IRQn;       /*!< DMA channel NVIC interrupt vector number. */
 } UARTx_DMA_Handle_t;
 
 /**
-  * @brief UART Peripheral Handle Structure
-  */
-typedef struct 
+ * @brief  UART Peripheral Handle Structure.
+ *
+ * The RX Ring Buffer path follows a Single Producer / Single Consumer model:
+ *
+ * USART RX IRQ -> Producer -> Ring Buffer -> Consumer -> Main/Application
+ *
+ * The USART interrupt only reads DR and pushes the received byte into the Ring Buffer.
+ * Protocol parsing and application processing are performed outside the interrupt.
+ */
+typedef struct
 {
-    USARTx_TypeDef_t   *Instance;    /* UART registers base address */
-    UARTx_InitTypeDef   Init;        /* UART communication parameters */
-    uint8_t           *pTxBuffPtr;  /* Pointer to UART Tx transfer buffer */
-    uint16_t           TxXferSize;   /* UART Tx transfer size */
-    volatile uint16_t   TxXferCount;  /* UART Tx transfer counter */
-    uint8_t           *pRxBuffPtr;  /* Pointer to UART Rx transfer buffer */
-    uint16_t           RxXferSize;   /* UART Rx transfer size */
-    volatile uint16_t   RxXferCount;  /* UART Rx transfer counter */
-    UARTx_DMA_Handle_t  DmaTx;       /* UART Tx DMA handle parameters */
-    UARTx_DMA_Handle_t  DmaRx;       /* UART Rx DMA handle parameters */
-    volatile uint32_t   ErrorCode;   /* UART Error code */
+    USARTx_TypeDef_t       *Instance;            /*!< UART register base address. */
+    UARTx_InitTypeDef       Init;                /*!< UART communication parameters. */
+
+    uint8_t                *pTxBuffPtr;          /*!< Pointer to UART interrupt TX buffer. */
+    uint16_t                TxXferSize;          /*!< UART interrupt TX transfer size. */
+    volatile uint16_t       TxXferCount;         /*!< Remaining interrupt TX bytes. */
+
+    uint8_t                *pRxBuffPtr;          /*!< Pointer to legacy fixed-length interrupt RX buffer. */
+    uint16_t                RxXferSize;          /*!< Legacy interrupt RX transfer size. */
+    volatile uint16_t       RxXferCount;         /*!< Remaining legacy interrupt RX bytes. */
+
+    RingBuffer_HandleTypeDef *pRxRingBuffer;     /*!< Attached continuous RX Ring Buffer. */
+    volatile uint32_t       RxOverflowCount;     /*!< Number of bytes dropped because RX Ring Buffer was full. */
+
+    UARTx_DMA_Handle_t      DmaTx;               /*!< UART TX DMA configuration. */
+    UARTx_DMA_Handle_t      DmaRx;               /*!< UART RX DMA configuration. */
+
+    volatile uint32_t       ErrorCode;           /*!< UART error code. */
 } UARTx_HandleTypeDef;
 
 /***********************************************************************************************************************
@@ -198,102 +179,250 @@ typedef struct
  **********************************************************************************************************************/
 
 /**
-  * @brief  Initializes the UART peripheral according to the specified parameters in UARTx_InitTypeDef.
-  * @param  huart: Pointer to a UARTx_HandleTypeDef structure that contains configuration info.
-  * @retval HALx_StatusTypeDef: STD_OK if initialization succeeded, STD_ERROR otherwise.
-  */
+ * @brief  Initialise the UART peripheral.
+ *
+ * Configures word length, parity, transfer mode, stop bits, hardware flow control,
+ * baud rate and enables the USART peripheral.
+ *
+ * @param[in,out] huart Pointer to UARTx_HandleTypeDef structure.
+ *
+ * @retval STD_OK    UART initialised successfully.
+ * @retval STD_ERROR Invalid parameter.
+ */
 HALx_StatusTypeDef UARTx_Init(UARTx_HandleTypeDef *huart);
 
 /**
-  * @brief  Transmits an amount of data in blocking mode (Polling).
-  * @param  huart: Pointer to UART handle structure.
-  * @param  pData: Pointer to data buffer.
-  * @param  Size: Amount of data elements to be sent.
-  * @param  Timeout: Timeout duration in milliseconds.
-  * @retval HALx_StatusTypeDef: STD_OK if transmission succeeded, STD_ERROR on parameter or timeout error.
-  */
-HALx_StatusTypeDef UARTx_Transmit(UARTx_HandleTypeDef *huart, const uint8_t *pData, uint16_t Size, uint32_t Timeout);
+ * @brief  Transmit an amount of data in blocking mode.
+ *
+ * @param[in,out] huart   Pointer to UART handle structure.
+ * @param[in]     pData   Pointer to source data buffer.
+ * @param[in]     Size    Number of bytes to transmit.
+ * @param[in]     Timeout Timeout loop count.
+ *
+ * @retval STD_OK    Transmission completed successfully.
+ * @retval STD_ERROR Invalid parameter or timeout.
+ */
+HALx_StatusTypeDef UARTx_Transmit(UARTx_HandleTypeDef *huart,
+                                  const uint8_t *pData,
+                                  uint16_t Size,
+                                  uint32_t Timeout);
 
 /**
-  * @brief  Receives an amount of data in blocking mode (Polling).
-  * @param  huart: Pointer to UART handle structure.
-  * @param  pData: Pointer to data buffer.
-  * @param  Size: Amount of data elements to be received.
-  * @param  Timeout: Timeout duration in milliseconds.
-  * @retval HALx_StatusTypeDef: STD_OK if reception succeeded, STD_ERROR on parameter or timeout error.
-  */
-HALx_StatusTypeDef UARTx_Receive(UARTx_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout);
+ * @brief  Receive an amount of data in blocking mode.
+ *
+ * @param[in,out] huart   Pointer to UART handle structure.
+ * @param[out]    pData   Pointer to destination data buffer.
+ * @param[in]     Size    Number of bytes to receive.
+ * @param[in]     Timeout Timeout loop count.
+ *
+ * @retval STD_OK    Reception completed successfully.
+ * @retval STD_ERROR Invalid parameter or timeout.
+ */
+HALx_StatusTypeDef UARTx_Receive(UARTx_HandleTypeDef *huart,
+                                 uint8_t *pData,
+                                 uint16_t Size,
+                                 uint32_t Timeout);
 
 /**
-  * @brief  Transmits an amount of data in non-blocking Interrupt mode.
-  * @param  huart: Pointer to UART handle structure.
-  * @param  pData: Pointer to data buffer.
-  * @param  Size: Amount of data elements to be sent.
-  * @retval HALx_StatusTypeDef: STD_OK if transfer started successfully, STD_ERROR otherwise.
-  */
-HALx_StatusTypeDef UARTx_Transmit_IT(UARTx_HandleTypeDef *huart, uint8_t *pData, uint16_t Size);
+ * @brief  Start a fixed-length UART transmission in interrupt mode.
+ *
+ * @param[in,out] huart Pointer to UART handle structure.
+ * @param[in]     pData Pointer to source data buffer.
+ * @param[in]     Size  Number of bytes to transmit.
+ *
+ * @retval STD_OK    Interrupt transfer started successfully.
+ * @retval STD_ERROR Invalid parameter or transmitter busy.
+ */
+HALx_StatusTypeDef UARTx_Transmit_IT(UARTx_HandleTypeDef *huart,
+                                     uint8_t *pData,
+                                     uint16_t Size);
 
 /**
-  * @brief  Receives an amount of data in non-blocking Interrupt mode.
-  * @param  huart: Pointer to UART handle structure.
-  * @param  pData: Pointer to data buffer.
-  * @param  Size: Amount of data elements to be received.
-  * @retval HALx_StatusTypeDef: STD_OK if reception started successfully, STD_ERROR otherwise.
-  */
-HALx_StatusTypeDef UARTx_Receive_IT(UARTx_HandleTypeDef *huart, uint8_t *pData, uint16_t Size);
+ * @brief  Start a fixed-length UART reception in interrupt mode.
+ *
+ * This legacy API receives exactly Size bytes and then disables RXNE interrupt.
+ * It cannot be used while continuous RX Ring Buffer mode is active.
+ *
+ * @param[in,out] huart Pointer to UART handle structure.
+ * @param[out]    pData Pointer to destination data buffer.
+ * @param[in]     Size  Number of bytes to receive.
+ *
+ * @retval STD_OK    Interrupt reception started successfully.
+ * @retval STD_ERROR Invalid parameter, receiver busy or Ring Buffer mode active.
+ */
+HALx_StatusTypeDef UARTx_Receive_IT(UARTx_HandleTypeDef *huart,
+                                    uint8_t *pData,
+                                    uint16_t Size);
 
 /**
-  * @brief  Transmits an amount of data in non-blocking DMA mode.
-  * @param  huart: Pointer to UART handle structure.
-  * @param  pData: Pointer to data buffer.
-  * @param  Size: Amount of data elements to be sent.
-  * @retval HALx_StatusTypeDef: STD_OK if DMA transfer initiated successfully, STD_ERROR otherwise.
-  */
-HALx_StatusTypeDef UARTx_Transmit_DMA(UARTx_HandleTypeDef *huart, uint8_t *pData, uint16_t Size);
+ * @brief  Start UART transmission in DMA mode.
+ *
+ * @param[in,out] huart Pointer to UART handle structure.
+ * @param[in]     pData Pointer to source data buffer.
+ * @param[in]     Size  Number of bytes to transmit.
+ *
+ * @retval STD_OK    DMA request enabled successfully.
+ * @retval STD_ERROR Invalid parameter.
+ */
+HALx_StatusTypeDef UARTx_Transmit_DMA(UARTx_HandleTypeDef *huart,
+                                      uint8_t *pData,
+                                      uint16_t Size);
 
 /**
-  * @brief  Receives an amount of data in non-blocking DMA mode.
-  * @param  huart: Pointer to UART handle structure.
-  * @param  pData: Pointer to data buffer.
-  * @param  Size: Amount of data elements to be received.
-  * @retval HALx_StatusTypeDef: STD_OK if DMA reception initiated successfully, STD_ERROR otherwise.
-  */
-HALx_StatusTypeDef UARTx_Receive_DMA(UARTx_HandleTypeDef *huart, uint8_t *pData, uint16_t Size);
+ * @brief  Start UART reception in DMA mode.
+ *
+ * DMA RX and RX Ring Buffer interrupt mode cannot consume USART DR simultaneously.
+ *
+ * @param[in,out] huart Pointer to UART handle structure.
+ * @param[out]    pData Pointer to destination data buffer.
+ * @param[in]     Size  Number of bytes to receive.
+ *
+ * @retval STD_OK    DMA request enabled successfully.
+ * @retval STD_ERROR Invalid parameter or RX Ring Buffer mode active.
+ */
+HALx_StatusTypeDef UARTx_Receive_DMA(UARTx_HandleTypeDef *huart,
+                                     uint8_t *pData,
+                                     uint16_t Size);
 
 /**
-  * @brief  Stops ongoing UART DMA transfer (Tx or Rx).
-  * @param  huart: Pointer to UART handle structure.
-  * @retval HALx_StatusTypeDef: STD_OK if DMA stop operation succeeded, STD_ERROR otherwise.
-  */
+ * @brief  Stop ongoing UART DMA transfer requests.
+ *
+ * @param[in,out] huart Pointer to UART handle structure.
+ *
+ * @retval STD_OK    DMA requests disabled successfully.
+ * @retval STD_ERROR Invalid parameter.
+ */
 HALx_StatusTypeDef UARTx_DMAStop(UARTx_HandleTypeDef *huart);
 
 /**
-  * @brief  Handles UART Interrupt Requests for specified instance.
-  * @param  huart: Pointer to UART handle structure.
-  * @retval None
-  */
+ * @brief  Start continuous UART RX using the generic Ring Buffer.
+ *
+ * The Ring Buffer shall already be initialised using RingBuffer_Init().
+ * RXNE interrupt remains enabled continuously until UARTx_RxRingBufferStop() is called.
+ *
+ * @param[in,out] huart     Pointer to UART handle structure.
+ * @param[in,out] pRingBuf  Pointer to initialised Ring Buffer handle.
+ *
+ * @retval STD_OK    RX Ring Buffer mode started successfully.
+ * @retval STD_ERROR Invalid parameter or another RX transfer is active.
+ */
+HALx_StatusTypeDef UARTx_RxRingBufferStart(UARTx_HandleTypeDef *huart,
+                                           RingBuffer_HandleTypeDef *pRingBuf);
+
+/**
+ * @brief  Stop continuous UART RX Ring Buffer mode.
+ *
+ * Disables RXNE interrupt and detaches the Ring Buffer from the UART handle.
+ *
+ * @param[in,out] huart Pointer to UART handle structure.
+ *
+ * @retval STD_OK    RX Ring Buffer mode stopped successfully.
+ * @retval STD_ERROR Invalid parameter.
+ */
+HALx_StatusTypeDef UARTx_RxRingBufferStop(UARTx_HandleTypeDef *huart);
+
+/**
+ * @brief  Read one byte from the attached UART RX Ring Buffer.
+ *
+ * @param[in,out] huart Pointer to UART handle structure.
+ * @param[out]    pData Pointer to destination byte.
+ *
+ * @retval RING_BUFFER_OK    Byte read successfully.
+ * @retval RING_BUFFER_EMPTY No received byte is available.
+ * @retval RING_BUFFER_ERROR Invalid parameter or Ring Buffer not attached.
+ */
+RingBuffer_StatusTypeDef UARTx_RxReadByte(UARTx_HandleTypeDef *huart,
+                                          uint8_t *pData);
+
+/**
+ * @brief  Read an exact number of bytes from the attached UART RX Ring Buffer.
+ *
+ * The underlying RingBuffer_Read() uses all-or-nothing behaviour.
+ *
+ * @param[in,out] huart  Pointer to UART handle structure.
+ * @param[out]    pData  Pointer to destination buffer.
+ * @param[in]     Length Number of bytes to read.
+ *
+ * @retval RING_BUFFER_OK    Requested bytes read successfully.
+ * @retval RING_BUFFER_EMPTY Not enough received bytes are available.
+ * @retval RING_BUFFER_ERROR Invalid parameter or Ring Buffer not attached.
+ */
+RingBuffer_StatusTypeDef UARTx_RxRead(UARTx_HandleTypeDef *huart,
+                                      uint8_t *pData,
+                                      uint16_t Length);
+
+/**
+ * @brief  Get the number of unread bytes in the UART RX Ring Buffer.
+ *
+ * @param[in] huart Pointer to UART handle structure.
+ *
+ * @retval Number of unread bytes.
+ */
+uint16_t UARTx_RxAvailable(const UARTx_HandleTypeDef *huart);
+
+/**
+ * @brief  Get the accumulated RX Ring Buffer overflow count.
+ *
+ * One count represents one received byte dropped because the software Ring Buffer was full.
+ *
+ * @param[in] huart Pointer to UART handle structure.
+ *
+ * @retval Number of dropped RX bytes.
+ */
+uint32_t UARTx_GetRxOverflowCount(const UARTx_HandleTypeDef *huart);
+
+/**
+ * @brief  Clear the accumulated RX Ring Buffer overflow count.
+ *
+ * @param[in,out] huart Pointer to UART handle structure.
+ *
+ * @retval None
+ */
+void UARTx_ClearRxOverflowCount(UARTx_HandleTypeDef *huart);
+
+/**
+ * @brief  Handle UART interrupt requests for the specified instance.
+ *
+ * RX Ring Buffer mode:
+ * USART DR -> RingBuffer_WriteChar() -> return from IRQ.
+ *
+ * Legacy fixed-length RX interrupt mode remains supported when no Ring Buffer is attached.
+ *
+ * @param[in,out] huart Pointer to UART handle structure.
+ *
+ * @retval None
+ */
 void UARTx_IRQHandler(UARTx_HandleTypeDef *huart);
 
 /**
-  * @brief  Handles DMA Interrupt Requests associated with UART Tx/Rx channels.
-  * @param  huart: Pointer to UART handle structure.
-  * @param  is_tx: Flag indicating channel type (1 for Tx channel, 0 for Rx channel).
-  * @retval None
-  */
-void UARTx_DMA_IRQHandler(UARTx_HandleTypeDef *huart, uint8_t is_tx);
+ * @brief  Handle DMA interrupt completion associated with UART TX or RX.
+ *
+ * @param[in,out] huart Pointer to UART handle structure.
+ * @param[in]     is_tx 1 for TX DMA channel, 0 for RX DMA channel.
+ *
+ * @retval None
+ */
+void UARTx_DMA_IRQHandler(UARTx_HandleTypeDef *huart,
+                           uint8_t is_tx);
 
 /**
-  * @brief  Tx Transfer completed callback function.
-  * @param  huart: Pointer to UART handle structure.
-  * @retval None
-  */
+ * @brief  UART transmit-complete weak callback.
+ *
+ * @param[in,out] huart Pointer to UART handle structure.
+ *
+ * @retval None
+ */
 void UARTx_TxCpltCallback(UARTx_HandleTypeDef *huart);
 
 /**
-  * @brief  Rx Transfer completed callback function.
-  * @param  huart: Pointer to UART handle structure.
-  * @retval None
-  */
+ * @brief  UART receive-complete weak callback for legacy fixed-length RX/DMA mode.
+ *
+ * Continuous RX Ring Buffer mode does not call this callback for every received byte.
+ *
+ * @param[in,out] huart Pointer to UART handle structure.
+ *
+ * @retval None
+ */
 void UARTx_RxCpltCallback(UARTx_HandleTypeDef *huart);
 
 #ifdef __cplusplus

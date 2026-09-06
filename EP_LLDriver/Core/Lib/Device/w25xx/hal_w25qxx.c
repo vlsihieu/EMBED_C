@@ -17,7 +17,7 @@
 extern "C" {
 #endif
 
-#include "w25qxx.h"
+#include "hal_w25qxx.h"
 
 #define W25QXX_SPI_TIMEOUT_DEFAULT         (100000U)
 #define W25QXX_BUSY_TIMEOUT                (5000000U)
@@ -42,7 +42,7 @@ static W25Qxx_StatusTypeDef_t W25Qxx_WriteEnable(W25Qxx_HandleTypeDef_t *hw25qxx
     SPIx_StatusTypeDef_t spi_status;
 
     W25Qxx_CS_Select(hw25qxx);
-    spi_status = SPI_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    spi_status = SPIx_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return (spi_status == SPIx_STATUS_OK) ? W25QXX_OK : W25QXX_ERROR;
@@ -75,7 +75,7 @@ static W25Qxx_StatusTypeDef_t W25Qxx_WaitUntilReady(W25Qxx_HandleTypeDef_t *hw25
  *                                          GLOBAL FUNCTIONS
  **********************************************************************************************************************/
 
-W25Qxx_StatusTypeDef_t W25Qxx_Init_t(W25Qxx_HandleTypeDef_t *hw25qxx, SPI_TypeDef *SPIx, GPIOx_typedef_t *CS_Port, uint16_t CS_Pin)
+W25Qxx_StatusTypeDef_t W25Qxx_Init_t(W25Qxx_HandleTypeDef_t *hw25qxx, SPIx_TypeDef *SPIx, GPIOx_typedef_t *CS_Port, uint16_t CS_Pin)
 {
     uint32_t full_id = 0U;
     GPIOx_InitTypeDef_t GPIO_InitStruct;
@@ -91,7 +91,7 @@ W25Qxx_StatusTypeDef_t W25Qxx_Init_t(W25Qxx_HandleTypeDef_t *hw25qxx, SPI_TypeDe
 
     GPIO_InitStruct.Pin   = CS_Pin;
     GPIO_InitStruct.Mode  = GPIOx_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Speed = GPIOx_SPEED_50MHZ;
+    GPIO_InitStruct.Speed = GPIOx_SPEED_FREQ_HIGH;
     GPIO_InitStruct.Pull  = GPIOx_NOPULL;
     GPIO_Init_t(CS_Port, &GPIO_InitStruct);
 
@@ -130,8 +130,8 @@ W25Qxx_StatusTypeDef_t W25Qxx_ReadID_t(W25Qxx_HandleTypeDef_t *hw25qxx, uint32_t
     if (pID == NULL) return W25QXX_ERROR;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
-    SPI_Receive_t(hw25qxx->SPIx, rx_buf, 3U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Receive_t(hw25qxx->SPIx, rx_buf, 3U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     *pID = ((uint32_t)rx_buf[0] << 16U) | ((uint32_t)rx_buf[1] << 8U) | ((uint32_t)rx_buf[2]);
@@ -146,8 +146,8 @@ W25Qxx_StatusTypeDef_t W25Qxx_ReadDeviceID_t(W25Qxx_HandleTypeDef_t *hw25qxx, ui
     if (pDeviceID == NULL) return W25QXX_ERROR;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, tx_buf, 4U, W25QXX_SPI_TIMEOUT_DEFAULT);
-    SPI_Receive_t(hw25qxx->SPIx, pDeviceID, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, tx_buf, 4U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Receive_t(hw25qxx->SPIx, pDeviceID, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25QXX_OK;
@@ -160,8 +160,8 @@ W25Qxx_StatusTypeDef_t W25Qxx_ReadUniqueID_t(W25Qxx_HandleTypeDef_t *hw25qxx, ui
     if (pUniqueID8Bytes == NULL) return W25QXX_ERROR;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, tx_buf, 5U, W25QXX_SPI_TIMEOUT_DEFAULT);
-    SPI_Receive_t(hw25qxx->SPIx, pUniqueID8Bytes, 8U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, tx_buf, 5U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Receive_t(hw25qxx->SPIx, pUniqueID8Bytes, 8U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25QXX_OK;
@@ -174,8 +174,8 @@ W25Qxx_StatusTypeDef_t W25Qxx_ReadStatusRegister1_t(W25Qxx_HandleTypeDef_t *hw25
     if (pStatus == NULL) return W25QXX_ERROR;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
-    SPI_Receive_t(hw25qxx->SPIx, pStatus, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Receive_t(hw25qxx->SPIx, pStatus, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25QXX_OK;
@@ -188,8 +188,8 @@ W25Qxx_StatusTypeDef_t W25Qxx_ReadStatusRegister2_t(W25Qxx_HandleTypeDef_t *hw25
     if (pStatus == NULL) return W25QXX_ERROR;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
-    SPI_Receive_t(hw25qxx->SPIx, pStatus, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Receive_t(hw25qxx->SPIx, pStatus, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25QXX_OK;
@@ -202,8 +202,8 @@ W25Qxx_StatusTypeDef_t W25Qxx_ReadStatusRegister3_t(W25Qxx_HandleTypeDef_t *hw25
     if (pStatus == NULL) return W25QXX_ERROR;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
-    SPI_Receive_t(hw25qxx->SPIx, pStatus, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Receive_t(hw25qxx->SPIx, pStatus, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25QXX_OK;
@@ -216,7 +216,7 @@ W25Qxx_StatusTypeDef_t W25Qxx_WriteStatusRegister1_t(W25Qxx_HandleTypeDef_t *hw2
     if (W25Qxx_WriteEnable(hw25qxx) != W25QXX_OK) return W25QXX_ERROR;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, tx_buf, 2U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, tx_buf, 2U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25Qxx_WaitUntilReady(hw25qxx, W25QXX_BUSY_TIMEOUT);
@@ -234,7 +234,7 @@ W25Qxx_StatusTypeDef_t W25Qxx_EraseSector_t(W25Qxx_HandleTypeDef_t *hw25qxx, uin
     if (W25Qxx_WriteEnable(hw25qxx) != W25QXX_OK) return W25QXX_ERROR;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, tx_buf, 4U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, tx_buf, 4U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25Qxx_WaitUntilReady(hw25qxx, W25QXX_BUSY_TIMEOUT);
@@ -252,7 +252,7 @@ W25Qxx_StatusTypeDef_t W25Qxx_EraseBlock32K_t(W25Qxx_HandleTypeDef_t *hw25qxx, u
     if (W25Qxx_WriteEnable(hw25qxx) != W25QXX_OK) return W25QXX_ERROR;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, tx_buf, 4U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, tx_buf, 4U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25Qxx_WaitUntilReady(hw25qxx, W25QXX_BUSY_TIMEOUT * 2U);
@@ -270,7 +270,7 @@ W25Qxx_StatusTypeDef_t W25Qxx_EraseBlock64K_t(W25Qxx_HandleTypeDef_t *hw25qxx, u
     if (W25Qxx_WriteEnable(hw25qxx) != W25QXX_OK) return W25QXX_ERROR;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, tx_buf, 4U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, tx_buf, 4U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25Qxx_WaitUntilReady(hw25qxx, W25QXX_BUSY_TIMEOUT * 4U);
@@ -283,7 +283,7 @@ W25Qxx_StatusTypeDef_t W25Qxx_EraseChip_t(W25Qxx_HandleTypeDef_t *hw25qxx)
     if (W25Qxx_WriteEnable(hw25qxx) != W25QXX_OK) return W25QXX_ERROR;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25Qxx_WaitUntilReady(hw25qxx, W25QXX_BUSY_TIMEOUT * 20U);
@@ -294,7 +294,7 @@ W25Qxx_StatusTypeDef_t W25Qxx_Suspend_t(W25Qxx_HandleTypeDef_t *hw25qxx)
     uint8_t cmd = W25QXX_CMD_ERASE_SUSPEND;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25QXX_OK;
@@ -305,7 +305,7 @@ W25Qxx_StatusTypeDef_t W25Qxx_Resume_t(W25Qxx_HandleTypeDef_t *hw25qxx)
     uint8_t cmd = W25QXX_CMD_ERASE_RESUME;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25QXX_OK;
@@ -325,8 +325,8 @@ W25Qxx_StatusTypeDef_t W25Qxx_WritePage_t(W25Qxx_HandleTypeDef_t *hw25qxx, uint8
     tx_buf[3] = (uint8_t)(target_addr & 0xFFU);
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, tx_buf, 4U, W25QXX_SPI_TIMEOUT_DEFAULT);
-    SPI_Transmit_t(hw25qxx->SPIx, pBuffer, Size, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, tx_buf, 4U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, pBuffer, Size, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25Qxx_WaitUntilReady(hw25qxx, W25QXX_BUSY_TIMEOUT);
@@ -374,8 +374,8 @@ W25Qxx_StatusTypeDef_t W25Qxx_ReadData_t(W25Qxx_HandleTypeDef_t *hw25qxx, uint8_
     if (W25Qxx_WaitUntilReady(hw25qxx, W25QXX_BUSY_TIMEOUT) != W25QXX_OK) return W25QXX_ERROR;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, tx_buf, 4U, W25QXX_SPI_TIMEOUT_DEFAULT);
-    SPI_Receive_t(hw25qxx->SPIx, pBuffer, (uint16_t)Size, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, tx_buf, 4U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Receive_t(hw25qxx->SPIx, pBuffer, (uint16_t)Size, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25QXX_OK;
@@ -395,8 +395,8 @@ W25Qxx_StatusTypeDef_t W25Qxx_FastRead_t(W25Qxx_HandleTypeDef_t *hw25qxx, uint8_
     if (W25Qxx_WaitUntilReady(hw25qxx, W25QXX_BUSY_TIMEOUT) != W25QXX_OK) return W25QXX_ERROR;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, tx_buf, 5U, W25QXX_SPI_TIMEOUT_DEFAULT);
-    SPI_Receive_t(hw25qxx->SPIx, pBuffer, (uint16_t)Size, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, tx_buf, 5U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Receive_t(hw25qxx->SPIx, pBuffer, (uint16_t)Size, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25QXX_OK;
@@ -407,7 +407,7 @@ W25Qxx_StatusTypeDef_t W25Qxx_PowerDown_t(W25Qxx_HandleTypeDef_t *hw25qxx)
     uint8_t cmd = W25QXX_CMD_POWER_DOWN;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25QXX_OK;
@@ -418,7 +418,7 @@ W25Qxx_StatusTypeDef_t W25Qxx_ReleasePowerDown_t(W25Qxx_HandleTypeDef_t *hw25qxx
     uint8_t cmd = W25QXX_CMD_RELEASE_POWER_DOWN;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25QXX_OK;
@@ -437,7 +437,7 @@ W25Qxx_StatusTypeDef_t W25Qxx_EraseSecurityRegister_t(W25Qxx_HandleTypeDef_t *hw
     tx_buf[3] = 0x00U;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, tx_buf, 4U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, tx_buf, 4U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25Qxx_WaitUntilReady(hw25qxx, W25QXX_BUSY_TIMEOUT);
@@ -456,8 +456,8 @@ W25Qxx_StatusTypeDef_t W25Qxx_ProgramSecurityRegister_t(W25Qxx_HandleTypeDef_t *
     tx_buf[3] = AddressOffset;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, tx_buf, 4U, W25QXX_SPI_TIMEOUT_DEFAULT);
-    SPI_Transmit_t(hw25qxx->SPIx, pBuffer, Size, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, tx_buf, 4U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, pBuffer, Size, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25Qxx_WaitUntilReady(hw25qxx, W25QXX_BUSY_TIMEOUT);
@@ -476,8 +476,8 @@ W25Qxx_StatusTypeDef_t W25Qxx_ReadSecurityRegister_t(W25Qxx_HandleTypeDef_t *hw2
     tx_buf[4] = 0x00U; /* Dummy Byte */
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, tx_buf, 5U, W25QXX_SPI_TIMEOUT_DEFAULT);
-    SPI_Receive_t(hw25qxx->SPIx, pBuffer, Size, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, tx_buf, 5U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Receive_t(hw25qxx->SPIx, pBuffer, Size, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25QXX_OK;
@@ -490,7 +490,7 @@ W25Qxx_StatusTypeDef_t W25Qxx_Enter4ByteAddressMode_t(W25Qxx_HandleTypeDef_t *hw
     if (W25Qxx_WriteEnable(hw25qxx) != W25QXX_OK) return W25QXX_ERROR;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25QXX_OK;
@@ -503,7 +503,7 @@ W25Qxx_StatusTypeDef_t W25Qxx_Exit4ByteAddressMode_t(W25Qxx_HandleTypeDef_t *hw2
     if (W25Qxx_WriteEnable(hw25qxx) != W25QXX_OK) return W25QXX_ERROR;
 
     W25Qxx_CS_Select(hw25qxx);
-    SPI_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
+    SPIx_Transmit_t(hw25qxx->SPIx, &cmd, 1U, W25QXX_SPI_TIMEOUT_DEFAULT);
     W25Qxx_CS_Deselect(hw25qxx);
 
     return W25QXX_OK;

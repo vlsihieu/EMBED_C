@@ -13,6 +13,23 @@ RM := rm -rf
 -include Core/Startup/subdir.mk
 -include Core/Src/LIB/subdir.mk
 -include Core/Src/subdir.mk
+<<<<<<< HEAD:Session5/control servo by uart/Debug/makefile
+=======
+-include Core/Lib/Utils/ringbuffer/subdir.mk
+-include Core/Lib/Protocol/spi/subdir.mk
+-include Core/Lib/Protocol/softSPI/subdir.mk
+-include Core/Lib/Protocol/rs485/subdir.mk
+-include Core/Lib/Protocol/lin/subdir.mk
+-include Core/Lib/Protocol/i2c/subdir.mk
+-include Core/Lib/Protocol/can/subdir.mk
+-include Core/Lib/Driver/uart/subdir.mk
+-include Core/Lib/Driver/timer/subdir.mk
+-include Core/Lib/Driver/rcc/subdir.mk
+-include Core/Lib/Driver/gpio/subdir.mk
+-include Core/Lib/Driver/dma/subdir.mk
+-include Core/Lib/Device/w25xx/subdir.mk
+-include subdir.mk
+>>>>>>> 45723b9 (update source):EP_LLDriver/Debug/makefile
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)

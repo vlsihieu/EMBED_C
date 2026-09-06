@@ -22,6 +22,22 @@ C_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+<<<<<<< HEAD:TESTF1/Debug/sources.mk
+=======
+Core/Lib/Device/w25xx \
+Core/Lib/Driver/dma \
+Core/Lib/Driver/gpio \
+Core/Lib/Driver/rcc \
+Core/Lib/Driver/timer \
+Core/Lib/Driver/uart \
+Core/Lib/Protocol/can \
+Core/Lib/Protocol/i2c \
+Core/Lib/Protocol/lin \
+Core/Lib/Protocol/rs485 \
+Core/Lib/Protocol/softSPI \
+Core/Lib/Protocol/spi \
+Core/Lib/Utils/ringbuffer \
+>>>>>>> 45723b9 (update source):EP_LLDriver/Debug/sources.mk
 Core/Src \
 Core/Startup \
 Drivers/STM32F1xx_HAL_Driver/Src \

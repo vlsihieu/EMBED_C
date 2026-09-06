@@ -25,7 +25,7 @@ extern "C" {
  *                                                  INCLUDES
  **********************************************************************************************************************/
 
-#include "stm32f103xb.h"
+// #include "stm32f103xb.h"
 #include "hal_clock.h"
 #include "define.h"
 #include <stdint.h>
