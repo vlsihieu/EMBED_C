@@ -1,0 +1,3 @@
+- fix Thẻ Git Conflict trong hal_uart.c: Dính các dòng đánh dấu conflict <<<<<<< HEAD và >>>>>>> ở dòng 171–188 làm gãy hàm UARTx_Init.
+- hal_uart.c gọi các macro USARTx_CR1_UE, USARTx_SR_TXE,... nhưng không có định nghĩa ở đâu dẫn tới báo lỗi undeclared
+- Xóa bỏ hoàn toàn các khai báo thừa khỏi hal_uart.h để kế thừa trực tiếp từ define.h, triệt tiêu lỗi trùng lặp redefinition. (Khai báo lại USARTx_TypeDef_t (typedef từ USART_TypeDef) và khai báo lại enum HALx_StatusTypeDef)
