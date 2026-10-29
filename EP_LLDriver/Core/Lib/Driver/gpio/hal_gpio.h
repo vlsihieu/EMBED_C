@@ -1,11 +1,10 @@
 /***********************************************************************************************************************
- * Project Name: STM32F103_BareMetal_Drivers
+ * Project Name: BareMetal_Drivers
  * 
  * File Name: hal_gpio.h
  *
  * Description: HAL GPIO Driver — Data types, register structures, bitmasks,
  *              and API prototypes for the General Purpose I/O peripheral
- *              on STM32F103xB devices.
  * 
  * Compiler: GCC
  *

@@ -194,134 +194,23 @@ typedef struct
  *                                           GLOBAL FUNCTION PROTOTYPES
  **********************************************************************************************************************/
 
-/**
- * @brief  Initializes the CAN peripheral according to the specified parameters in the CAN_InitTypeDef.
- * @param  hcan: Pointer to a CANx_HandleTypeDef structure containing configuration info.
- * @retval HALx_StatusTypeDef: HAL status (HAL_OK, HAL_ERROR, HAL_BUSY, etc.).
- */
+
 HALx_StatusTypeDef CANx_Init(CANx_HandleTypeDef *hcan);
-
-/**
- * @brief  De-initializes the CAN peripheral registers to their default reset values.
- * @param  hcan: Pointer to a CANx_HandleTypeDef structure.
- * @retval HALx_StatusTypeDef: HAL status.
- */
 HALx_StatusTypeDef CANx_DeInit(CANx_HandleTypeDef *hcan);
-
-/**
- * @brief  Configures the CAN reception filter bank according to specified parameters.
- * @param  hcan: Pointer to a CANx_HandleTypeDef structure.
- * @param  sFilterConfig: Pointer to a CAN_FilterTypeDef structure containing filter parameters.
- * @retval HALx_StatusTypeDef: HAL status.
- */
 HALx_StatusTypeDef CANx_ConfigFilter(CANx_HandleTypeDef *hcan, const CAN_FilterTypeDef *sFilterConfig);
-
-/**
- * @brief  Starts the CAN module and enables communication on the bus.
- * @param  hcan: Pointer to a CANx_HandleTypeDef structure.
- * @retval HALx_StatusTypeDef: HAL status.
- */
 HALx_StatusTypeDef CANx_Start(CANx_HandleTypeDef *hcan);
-
-/**
- * @brief  Stops the CAN module and disables communication on the bus.
- * @param  hcan: Pointer to a CANx_HandleTypeDef structure.
- * @retval HALx_StatusTypeDef: HAL status.
- */
 HALx_StatusTypeDef CANx_Stop(CANx_HandleTypeDef *hcan);
-
-/* Data Transfer APIs */
-
-/**
- * @brief  Adds a message to the first free Tx Mailbox and activates the corresponding transmission request.
- * @param  hcan: Pointer to a CANx_HandleTypeDef structure.
- * @param  pHeader: Pointer to a CAN_TxHeaderTypeDef structure containing header info.
- * @param  aData: Array containing the payload data bytes (0 to 8 bytes).
- * @param  pTxMailbox: Pointer to variable where the allocated Tx mailbox index will be stored.
- * @retval HALx_StatusTypeDef: HAL status.
- */
 HALx_StatusTypeDef CANx_AddTxMessage(CANx_HandleTypeDef *hcan, const CAN_TxHeaderTypeDef *pHeader, const uint8_t aData[], uint32_t *pTxMailbox);
-
-/**
- * @brief  Gets an Rx message from the specified Receive FIFO mailbox.
- * @param  hcan: Pointer to a CANx_HandleTypeDef structure.
- * @param  RxFifo: Receive FIFO number (CAN_RX_FIFO0 or CAN_RX_FIFO1).
- * @param  pHeader: Pointer to a CAN_RxHeaderTypeDef structure to store message header info.
- * @param  aData: Array where the received payload data bytes will be copied.
- * @retval HALx_StatusTypeDef: HAL status.
- */
 HALx_StatusTypeDef CANx_GetRxMessage(CANx_HandleTypeDef *hcan, uint32_t RxFifo, CAN_RxHeaderTypeDef *pHeader, uint8_t aData[]);
-
-/* Interrupt Control & Handlers */
-
-/**
- * @brief  Enables active interrupts on the CAN peripheral.
- * @param  hcan: Pointer to a CANx_HandleTypeDef structure.
- * @param  ActiveITs: Combination of interrupt flags to enable (e.g., CAN_IT_RX_FIFO0_MSG_PENDING).
- * @retval HALx_StatusTypeDef: HAL status.
- */
 HALx_StatusTypeDef CANx_ActivateNotification(CANx_HandleTypeDef *hcan, uint32_t ActiveITs);
-
-/**
- * @brief  Disables active interrupts on the CAN peripheral.
- * @param  hcan: Pointer to a CANx_HandleTypeDef structure.
- * @param  InactiveITs: Combination of interrupt flags to disable.
- * @retval HALx_StatusTypeDef: HAL status.
- */
 HALx_StatusTypeDef CANx_DeactivateNotification(CANx_HandleTypeDef *hcan, uint32_t InactiveITs);
-
-/**
- * @brief  Handles CAN Transmit Interrupt requests.
- * @param  hcan: Pointer to a CANx_HandleTypeDef structure.
- */
 void CANx_TX_IRQHandler(CANx_HandleTypeDef *hcan);
-
-/**
- * @brief  Handles CAN Receive FIFO 0 Interrupt requests.
- * @param  hcan: Pointer to a CANx_HandleTypeDef structure.
- */
 void CANx_RX0_IRQHandler(CANx_HandleTypeDef *hcan);
-
-/**
- * @brief  Handles CAN Receive FIFO 1 Interrupt requests.
- * @param  hcan: Pointer to a CANx_HandleTypeDef structure.
- */
 void CANx_RX1_IRQHandler(CANx_HandleTypeDef *hcan);
-
-/**
- * @brief  Handles CAN Status Change and Error (SCE) Interrupt requests.
- * @param  hcan: Pointer to a CANx_HandleTypeDef structure.
- */
 void CANx_SCE_IRQHandler(CANx_HandleTypeDef *hcan);
-
-/* Weak Callbacks */
-
-/**
- * @brief  Tx Mailbox 0 Complete callback.
- * @note   Weak function that can be overridden in user application.
- * @param  hcan: Pointer to a CANx_HandleTypeDef structure.
- */
 void CANx_TxMailbox0CompleteCallback(CANx_HandleTypeDef *hcan);
-
-/**
- * @brief  Rx FIFO 0 Message Pending callback.
- * @note   Weak function that can be overridden in user application.
- * @param  hcan: Pointer to a CANx_HandleTypeDef structure.
- */
 void CANx_RxFifo0MsgPendingCallback(CANx_HandleTypeDef *hcan);
-
-/**
- * @brief  Rx FIFO 1 Message Pending callback.
- * @note   Weak function that can be overridden in user application.
- * @param  hcan: Pointer to a CANx_HandleTypeDef structure.
- */
 void CANx_RxFifo1MsgPendingCallback(CANx_HandleTypeDef *hcan);
-
-/**
- * @brief  CAN Error callback.
- * @note   Weak function that can be overridden in user application.
- * @param  hcan: Pointer to a CANx_HandleTypeDef structure.
- */
 void CANx_ErrorCallback(CANx_HandleTypeDef *hcan);
 
 #ifdef __cplusplus

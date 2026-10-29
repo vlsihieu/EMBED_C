@@ -168,24 +168,7 @@ HALx_StatusTypeDef UARTx_Init(UARTx_HandleTypeDef *huart)
         return STD_ERROR;
     }
 
-<<<<<<< HEAD
-    if (huart->Instance == USART1x)
-    {
-      RCC->APB2ENR |= (1U << 14);   // USART1EN
-    }
-    else if (huart->Instance == USART2x)
-    {
-      RCC->APB1ENR |= (1U << 17);   // USART2EN
-    }
-    else if (huart->Instance == USART3x)
-    {
-      RCC->APB1ENR |= (1U << 18);   // USART3EN
-    }
-
-    /* Disable USART prior to configuration */
-=======
     /* Disable USART before modifying configuration registers. */
->>>>>>> 45723b9 (update source)
     huart->Instance->CR1 &= ~USARTx_CR1_UE;
 
     /* Configure Word Length, Parity and Transfer Mode in CR1. */
@@ -828,8 +811,7 @@ void UARTx_IRQHandler(UARTx_HandleTypeDef *huart)
     }
 
     /* TXE Interrupt Handling. */
-    if (((sr & USARTx_SR_TXE) != 0U) &&
-        ((cr1 & USARTx_CR1_TXEIE) != 0U))
+    if (((sr & USARTx_SR_TXE) != 0U) && ((cr1 & USARTx_CR1_TXEIE) != 0U))
     {
         if ((huart->TxXferCount > 0U) &&
             (huart->pTxBuffPtr != NULL))
